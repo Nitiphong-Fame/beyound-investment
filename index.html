@@ -93,10 +93,43 @@
   .strategy-box p { font-size: 13px; color: var(--muted); line-height: 1.7; }
   .disclaimer { background: #9e6a0311; border: 1px solid #9e6a0333; color: var(--yellow); padding: 10px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; }
   .updated-badge { background: #1f6feb22; border: 1px solid #1f6feb55; color: var(--blue); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  /* ── Sub-tabs inside AI Trading ── */
+  .subtabs-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 12px 12px 0 0; overflow: hidden; margin-bottom: 0; }
+  .subtabs { display: flex; border-bottom: 2px solid var(--border); padding: 0 8px; background: var(--card2); }
+  .subtab { padding: 12px 26px; cursor: pointer; font-size: 14px; font-weight: 700; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+  .subtab:hover { color: var(--text); }
+  .subtab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .subtab-label { font-size: 15px; font-weight: 800; }
+  .subtab-pct { font-size: 12px; font-weight: 600; padding: 2px 6px; border-radius: 4px; }
+  .subtab-pct.pos { color: var(--green); background: #3fb95015; }
+  .subtab-pct.neg { color: var(--red); background: #f8514915; }
+  .stock-section { display: none; } .stock-section.active { display: block; }
+  /* Header row with price */
+  .trade-header-row { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  .trade-name { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .trade-price-box { text-align: right; }
+  .trade-price-now { font-size: 32px; font-weight: 800; color: var(--text); line-height: 1; }
+  .trade-price-chg { font-size: 14px; font-weight: 600; margin-top: 4px; }
+  /* Stat mini-cards row */
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit,minmax(130px,1fr)); gap: 10px; margin-bottom: 20px; }
+  .stat-item { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+  .stat-label { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+  .stat-val { font-size: 20px; font-weight: 700; }
+  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  /* Progress bar for price position */
+  .price-bar-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
+  .price-bar-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .price-bar-track { height: 10px; border-radius: 5px; background: linear-gradient(to right, #f8514966 0%, #d2992266 40%, #3fb95066 70%, #3fb95099 100%); position: relative; margin: 8px 0 20px; }
+  .price-bar-marker { width: 16px; height: 16px; background: white; border-radius: 50%; position: absolute; top: -3px; transform: translateX(-50%); border: 2px solid var(--card); box-shadow: 0 0 0 2px var(--blue); }
+  .price-bar-labels { display: flex; justify-content: space-between; font-size: 12px; flex-wrap: wrap; gap: 8px; }
+  .price-bar-label { text-align: center; }
+  .price-bar-label .lbl { font-size: 10px; color: var(--muted); font-weight: 600; }
+  .price-bar-label .val { font-size: 13px; font-weight: 700; margin-top: 2px; }
   @media (max-width: 768px) {
     .main { padding: 16px; }
     .charts-grid,.scenarios { grid-template-columns: 1fr; }
     .header { padding: 16px; }
+    .subtab { padding: 10px 16px; }
   }
 </style>
 </head>
@@ -121,17 +154,17 @@
   <div class="summary-grid">
     <div class="card">
       <div class="card-label">💰 มูลค่าพอร์ตรวม (THB)</div>
-      <div class="card-value blue-text">฿186,336</div>
+      <div class="card-value blue-text">฿184,400</div>
       <div class="card-sub">≈ $5,612.53 USD</div>
     </div>
     <div class="card">
       <div class="card-label">📉 กำไร/ขาดทุนรวม (USD)</div>
-      <div class="card-value negative">$1,017.45</div>
-      <div class="card-sub negative">-15.3% โดยรวม</div>
+      <div class="card-value negative">$576.02</div>
+      <div class="card-sub negative">-9.3% โดยรวม</div>
     </div>
     <div class="card">
       <div class="card-label">💱 อัตราแลกเปลี่ยน</div>
-      <div class="card-value blue-text">33.20</div>
+      <div class="card-value blue-text">32.85</div>
       <div class="card-sub">USD / THB</div>
     </div>
     <div class="card">
@@ -141,12 +174,12 @@
     </div>
     <div class="card">
       <div class="card-label">✅ กำไร</div>
-      <div class="card-value positive">2</div>
-      <div class="card-sub positive">EOSE, GOOG</div>
+      <div class="card-value positive">3</div>
+      <div class="card-sub positive">PLTR, AMD, RKLB</div>
     </div>
     <div class="card">
       <div class="card-label">❌ ขาดทุน</div>
-      <div class="card-value negative">17</div>
+      <div class="card-value negative">16</div>
       <div class="card-sub negative">รายการในพอร์ต</div>
     </div>
   </div>
@@ -183,53 +216,53 @@
         <td style="color:var(--muted)">1</td>
         <td><span class="ticker">NVDA</span></td>
         <td>$176.6515</td>
-        <td>$174.9000</td>
-        <td class="negative">$11.28</td>
-        <td class="negative">-0.99%</td>
+        <td>$172.7000</td>
+        <td class="negative">$25.77</td>
+        <td class="negative">-2.24%</td>
         <td>$1126.27</td>
-        <td>฿37,392</td>
+        <td>฿37,004</td>
         <td>20.1%</td>
         <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
-      <tr data-advice="advice-hold">
+      <tr data-advice="advice-reduce">
         <td style="color:var(--muted)">2</td>
         <td><span class="ticker">MSFT</span></td>
         <td>$454.4208</td>
-        <td>$383.5100</td>
-        <td class="negative">$151.99</td>
-        <td class="negative">-15.60%</td>
+        <td>$381.8700</td>
+        <td class="negative">$156.17</td>
+        <td class="negative">-15.97%</td>
         <td>$822.01</td>
-        <td>฿27,291</td>
+        <td>฿27,007</td>
         <td>14.6%</td>
-        <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td><span class="advice-badge advice-reduce">⚠️ Reduce</span></td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-reduce">
         <td style="color:var(--muted)">3</td>
         <td><span class="ticker">RXRX</span></td>
         <td>$4.1875</td>
-        <td>$3.4100</td>
-        <td class="negative">$50.13</td>
-        <td class="negative">-18.57%</td>
+        <td>$3.2800</td>
+        <td class="negative">$60.83</td>
+        <td class="negative">-21.67%</td>
         <td>$219.87</td>
-        <td>฿7,300</td>
+        <td>฿7,224</td>1
         <td>3.9%</td>
         <td><span class="advice-badge advice-reduce">⚠️ Reduce</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
-      <tr data-advice="advice-hold">
+      <tr data-advice="advice-reduce">
         <td style="color:var(--muted)">4</td>
         <td><span class="ticker">ORCL</span></td>
         <td>$176.4656</td>
-        <td>$150.7700</td>
-        <td class="negative">$108.29</td>
-        <td class="negative">-14.56%</td>
+        <td>$149.6800</td>
+        <td class="negative">$113.70</td>
+        <td class="negative">-15.18%</td>
         <td>$635.39</td>
-        <td>฿21,095</td>
+        <td>฿20,876</td>
         <td>11.3%</td>
-        <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td><span class="advice-badge advice-reduce">⚠️ Reduce</span></td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-hold">
         <td style="color:var(--muted)">5</td>
@@ -239,101 +272,101 @@
         <td class="negative">$19.79</td>
         <td class="negative">-3.99%</td>
         <td>$475.66</td>
-        <td>฿15,792</td>
+        <td>฿15,628</td>
         <td>8.5%</td>
         <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-hold">
         <td style="color:var(--muted)">6</td>
         <td><span class="ticker">AVGO</span></td>
         <td>$334.6077</td>
-        <td>$315.6500</td>
-        <td class="negative">$22.82</td>
-        <td class="negative">-5.67%</td>
+        <td>$310.5100</td>
+        <td class="negative">$29.48</td>
+        <td class="negative">-7.20%</td>
         <td>$379.92</td>
-        <td>฿12,613</td>
+        <td>฿12,482</td>
         <td>6.8%</td>
         <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
-      <tr data-advice="advice-increase">
+      <tr data-advice="advice-hold">
         <td style="color:var(--muted)">7</td>
         <td><span class="ticker">PLTR</span></td>
         <td>$145.7341</td>
-        <td>$65.8000</td>
-        <td class="negative">$473.42</td>
-        <td class="negative">-54.85%</td>
+        <td>$150.6800</td>
+        <td class="positive">+$12.79</td>
+        <td class="positive">+3.39%</td>
         <td>$389.71</td>
-        <td>฿12,938</td>
+        <td>฿12,804</td>
         <td>6.9%</td>
-        <td><span class="advice-badge advice-increase">✅ ถือต่อ/เพิ่ม</span></td>
+        <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
         <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-hold">
         <td style="color:var(--muted)">8</td>
         <td><span class="ticker">GOOGL</span></td>
         <td>$316.3618</td>
-        <td>$307.1300</td>
-        <td class="negative">$9.15</td>
-        <td class="negative">-2.92%</td>
+        <td>$301.0000</td>
+        <td class="negative">$15.54</td>
+        <td class="negative">-4.86%</td>
         <td>$304.53</td>
-        <td>฿10,110</td>
+        <td>฿10,005</td>
         <td>5.4%</td>
         <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-hold">
         <td style="color:var(--muted)">9</td>
         <td><span class="ticker">GOOG</span></td>
         <td>$300.5908</td>
-        <td>$307.4500</td>
-        <td class="positive">+$5.89</td>
-        <td class="positive">+2.28%</td>
+        <td>$298.7900</td>
+        <td class="negative">$1.59</td>
+        <td class="negative">-0.60%</td>
         <td>$264.17</td>
-        <td>฿8,770</td>
+        <td>฿8,679</td>
         <td>4.7%</td>
         <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-hold">
         <td style="color:var(--muted)">10</td>
         <td><span class="ticker">TSLA</span></td>
         <td>$421.9834</td>
-        <td>$380.3000</td>
-        <td class="negative">$22.67</td>
-        <td class="negative">-9.88%</td>
+        <td>$367.9600</td>
+        <td class="negative">$30.36</td>
+        <td class="negative">-12.80%</td>
         <td>$206.80</td>
-        <td>฿6,866</td>
+        <td>฿6,794</td>
         <td>3.7%</td>
         <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-hold">
         <td style="color:var(--muted)">11</td>
         <td><span class="ticker">AMD</span></td>
         <td>$200.0682</td>
-        <td>$178.5000</td>
-        <td class="negative">$25.96</td>
-        <td class="negative">-10.78%</td>
+        <td>$205.2700</td>
+        <td class="positive">+$5.44</td>
+        <td class="positive">+2.60%</td>
         <td>$214.85</td>
-        <td>฿7,133</td>
+        <td>฿7,059</td>
         <td>3.8%</td>
         <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-hold">
         <td style="color:var(--muted)">12</td>
         <td><span class="ticker">META</span></td>
         <td>$631.0157</td>
-        <td>$606.7000</td>
-        <td class="negative">$6.11</td>
-        <td class="negative">-3.85%</td>
+        <td>$593.6600</td>
+        <td class="negative">$9.60</td>
+        <td class="negative">-5.92%</td>
         <td>$152.51</td>
-        <td>฿5,063</td>
+        <td>฿5,011</td>
         <td>2.7%</td>
         <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-hold">
         <td style="color:var(--muted)">13</td>
@@ -343,10 +376,10 @@
         <td class="negative">$4.63</td>
         <td class="negative">-4.65%</td>
         <td>$94.82</td>
-        <td>฿3,148</td>
+        <td>฿3,115</td>
         <td>1.7%</td>
         <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-reduce">
         <td style="color:var(--muted)">14</td>
@@ -356,23 +389,23 @@
         <td class="negative">$45.83</td>
         <td class="negative">-34.52%</td>
         <td>$86.94</td>
-        <td>฿2,886</td>
+        <td>฿2,856</td>
         <td>1.5%</td>
         <td><span class="advice-badge advice-reduce">⚠️ Reduce</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-hold">
         <td style="color:var(--muted)">15</td>
         <td><span class="ticker">LLY</span></td>
         <td>$943.0277</td>
-        <td>$925.5000</td>
-        <td class="negative">$1.64</td>
-        <td class="negative">-1.86%</td>
+        <td>$917.8600</td>
+        <td class="negative">$2.37</td>
+        <td class="negative">-2.67%</td>
         <td>$86.58</td>
-        <td>฿2,874</td>
+        <td>฿2,845</td>
         <td>1.5%</td>
         <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-cutloss">
         <td style="color:var(--muted)">16</td>
@@ -382,62 +415,62 @@
         <td class="negative">$48.36</td>
         <td class="negative">-41.71%</td>
         <td>$67.59</td>
-        <td>฿2,244</td>
+        <td>฿2,221</td>
         <td>1.2%</td>
         <td><span class="advice-badge advice-cutloss">⛔ Cut Loss</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
-      <tr data-advice="advice-cutloss">
+      <tr data-advice="advice-hold">
         <td style="color:var(--muted)">17</td>
         <td><span class="ticker">RKLB</span></td>
         <td>$65.6900</td>
-        <td>$35.4200</td>
-        <td class="negative">$26.78</td>
-        <td class="negative">-46.08%</td>
+        <td>$67.2300</td>
+        <td class="positive">+$0.72</td>
+        <td class="positive">+2.34%</td>
         <td>$31.34</td>
-        <td>฿1,040</td>
+        <td>฿1,030</td>
         <td>0.6%</td>
-        <td><span class="advice-badge advice-cutloss">⛔ Cut Loss</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
-      <tr data-advice="advice-hold">
+      <tr data-advice="advice-cutloss">
         <td style="color:var(--muted)">18</td>
         <td><span class="ticker">EOSE</span></td>
         <td>$11.0328</td>
-        <td>$28.1500</td>
-        <td class="positive">+$16.46</td>
-        <td class="positive">+155.15%</td>
+        <td>$5.2500</td>
+        <td class="negative">$29.82</td>
+        <td class="negative">-52.41%</td>
         <td>$27.07</td>
-        <td>฿899</td>
+        <td>฿889</td>
         <td>0.5%</td>
-        <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td><span class="advice-badge advice-cutloss">⛔ Cut Loss</span></td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
-      <tr data-advice="advice-reduce">
+      <tr data-advice="advice-hold">
         <td style="color:var(--muted)">19</td>
         <td><span class="ticker">HOOD</span></td>
         <td>$73.9040</td>
-        <td>$52.3000</td>
-        <td class="negative">$10.95</td>
-        <td class="negative">-29.23%</td>
+        <td>$70.8900</td>
+        <td class="negative">$1.13</td>
+        <td class="negative">-4.08%</td>
         <td>$26.50</td>
-        <td>฿880</td>
+        <td>฿871</td>
         <td>0.5%</td>
-        <td><span class="advice-badge advice-reduce">⚠️ Reduce</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 21 มี.ค.</td>
+        <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr>
       <tr data-advice="advice-hold">
         <td style="color:var(--muted)">20</td>
         <td><span class="ticker">GOLD</span></td>
         <td>$4658.6300</td>
-        <td>$4690.0000</td>
+        <td>$4677.0000</td>
         <td class="positive">+$0.00</td>
         <td class="positive">+0.00%</td>
         <td>$0.00</td>
         <td>฿0</td>
         <td>0.0%</td>
         <td><span class="advice-badge advice-hold">🔵 ถือต่อ</span></td>
-        <td style="color:var(--muted);font-size:12px">—</td>
+        <td style="color:var(--muted);font-size:12px">🆕 22 มี.ค.</td>
       </tr></tbody>
     </table>
   </div>
@@ -450,389 +483,332 @@
 
 <!-- SHEET 2: AI TRADING -->
 <div id="tab-ai" class="section main">
-  
-  <div class="disclaimer">⚠️ อัปเดต 22 Mar 2026 — ไม่ใช่คำแนะนำการลงทุน — ตัดสินใจด้วยตนเองเสมอ</div>
+  <div class="disclaimer">⚠️ ข้อมูลวิเคราะห์ 22 Mar 2026 — ไม่ใช่คำแนะนำการลงทุน — ตัดสินใจด้วยตนเองเสมอ</div>
 
-  <!-- ── Top Summary Bar ── -->
-  <div class="summary-grid" style="margin-bottom:20px;">
-    <div class="card">
-      <div class="card-label">⚡ Active Trades</div>
-      <div class="card-value blue-text">2 ตัว</div>
-      <div class="card-sub">Col S ว่าง = ยังถืออยู่</div>
+  <!-- Sub-tabs bar -->
+  <div class="subtabs-wrap">
+    <div class="subtabs">
+      <div class="subtab active" onclick="switchStock('net')">
+        <span class="subtab-label">NET</span>
+        <span class="subtab-pct pos">+0.9%</span>
+      </div>
+      <div class="subtab" onclick="switchStock('mrvl')">
+        <span class="subtab-label">MRVL</span>
+        <span class="subtab-pct pos">+0.5%</span>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-label">💰 งบรวม</div>
-      <div class="card-value blue-text">$200</div>
-      <div class="card-sub">Week Trade Budget</div>
-    </div>
-    <div class="card">
-      <div class="card-label">📅 อัปเดต</div>
-      <div class="card-value blue-text" style="font-size:18px">22 Mar 2026</div>
-      <div class="card-sub">🤖 AI Auto</div>
-    </div>
-  </div>
 
-  <!-- ── Sub-Tabs ── -->
-  <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;gap:4px;">
-    <button id="stock-tab-0" onclick="switchStock(0,2)"
-          style="padding:10px 20px;background:none;border:none;border-bottom:2px solid #58a6ff;color:var(--text);cursor:pointer;font-size:14px;font-weight:700;transition:all .2s;">
-          NET <span style="font-size:12px;color:#3fb950;margin-left:4px">+0.9%</span>
-        </button><button id="stock-tab-1" onclick="switchStock(1,2)"
-          style="padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-size:14px;font-weight:700;transition:all .2s;">
-          MRVL <span style="font-size:12px;color:#3fb950;margin-left:4px">+0.5%</span>
-        </button>
-  </div>
+    <!-- ══════════ NET ══════════ -->
+    <div id="stock-net" class="stock-section active trade-card" style="border-radius:0 0 12px 12px; border-top:none;">
 
-  <!-- ── Stock Panels ── -->
-  
-<div id="trade-panel-0" class="trade-panel" style="display:block">
-
-  <!-- ── Header ── -->
-  <div class="trade-card" style="margin-bottom:20px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;">
-      <div style="display:flex;align-items:center;gap:14px;">
-        <div style="font-size:36px;font-weight:800;color:var(--blue);letter-spacing:-1px">NET</div>
+      <!-- Header -->
+      <div class="trade-header-row">
         <div>
-          <div style="font-size:13px;color:var(--muted)">Cloudflare, Inc.</div>
-          <div style="margin-top:4px;">
-            <span style="background:#1f6feb22;color:#58a6ff;border:1px solid #58a6ff66;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">⚡ Active</span>
-            <span style="margin-left:8px;font-size:13px;color:#8b949e">อัปเดต 22 Mar 2026 <span style="background:#1f6feb22;border:1px solid #1f6feb55;color:#58a6ff;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:600">🤖 AI</span></span>
+          <div class="trade-ticker">NET <span style="font-size:16px;color:var(--muted)">Cloudflare, Inc.</span></div>
+          <div class="trade-name">
+            <span class="advice-badge advice-hold" style="margin-right:6px;">⚡ Active</span>
+            📅 อัปเดต 22 Mar 2026 <span class="updated-badge">🤖 AI</span>
+          </div>
+        </div>
+        <div class="trade-price-box">
+          <div class="trade-price-now">$122.50</div>
+          <div class="trade-price-chg positive">+0.90% (+$1.09)</div>
+        </div>
+      </div>
+
+      <!-- Stat row -->
+      <div class="stat-row">
+        <div class="stat-item">
+          <div class="stat-label">🎯 Entry Price</div>
+          <div class="stat-val blue-text">$121.00</div>
+          <div class="stat-sub">งบ $80 | 0.6612 shares</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">📈 RSI Daily</div>
+          <div class="stat-val" style="color:var(--yellow)">52.4</div>
+          <div class="stat-sub">Neutral</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">⚡ RSI Hourly</div>
+          <div class="stat-val" style="color:var(--yellow)">44.1</div>
+          <div class="stat-sub">Neutral</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">⚖️ Risk / Reward</div>
+          <div class="stat-val positive">1:2.2</div>
+          <div class="stat-sub">Week Trade</div>
+        </div>
+      </div>
+
+      <!-- Price bar -->
+      <div class="price-bar-wrap">
+        <div class="price-bar-title"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block;"></span> ระดับราคา & ความคืบหน้า</div>
+        <div class="price-bar-track">
+          <!-- marker position: (current-SL)/(TP3-SL) = (122.50-114.95)/(135.52-114.95) = 7.55/20.57 ≈ 36.7% -->
+          <div class="price-bar-marker" style="left:36.7%"></div>
+        </div>
+        <div class="price-bar-labels">
+          <div class="price-bar-label">
+            <div class="lbl">🎯 Entry</div>
+            <div class="val blue-text">$121.00</div>
+            <div class="lbl">ราคาเข้า</div>
+          </div>
+          <div class="price-bar-label">
+            <div class="lbl">✅ TP1</div>
+            <div class="val positive">$127.05</div>
+            <div class="lbl">+5.0% | ขาย 40%</div>
+          </div>
+          <div class="price-bar-label">
+            <div class="lbl">✅ TP2</div>
+            <div class="val positive">$130.68</div>
+            <div class="lbl">+8.0% | ขาย 40%</div>
+          </div>
+          <div class="price-bar-label">
+            <div class="lbl">🏆 TP3</div>
+            <div class="val positive">$135.52</div>
+            <div class="lbl">+12.0% | ขาย 20%</div>
+          </div>
+          <div class="price-bar-label">
+            <div class="lbl">🛑 Stop Loss</div>
+            <div class="val negative">$114.95</div>
+            <div class="lbl">-5.0% | ตัดทั้งหมด</div>
           </div>
         </div>
       </div>
-      <div style="text-align:right;">
-        <div style="font-size:28px;font-weight:700;color:var(--text)">$215.42</div>
-        <div style="font-size:15px;font-weight:700;color:#3fb950">+0.90% (+$1.08)</div>
-      </div>
-    </div>
-  </div>
 
-  <!-- ── Summary Cards ── -->
-  <div class="summary-grid" style="margin-bottom:20px;">
-    <div class="card">
-      <div class="card-label">🎯 Entry Price</div>
-      <div class="card-value blue-text">$213.50</div>
-      <div class="card-sub">งบ $120 | 0.5581 shares</div>
-    </div>
-    <div class="card">
-      <div class="card-label">📈 RSI Daily</div>
-      <div class="card-value" style="color:#3fb950">67.3</div>
-      <div class="card-sub">Neutral</div>
-    </div>
-    <div class="card">
-      <div class="card-label">⚡ RSI Hourly</div>
-      <div class="card-value" style="color:#d29922">41.2</div>
-      <div class="card-sub">Neutral</div>
-    </div>
-    <div class="card">
-      <div class="card-label">⚖️ Risk / Reward</div>
-      <div class="card-value" style="color:#d29922">1:2.4</div>
-      <div class="card-sub">Week Trade</div>
-    </div>
-  </div>
-
-  <!-- ── Price Level Progress ── -->
-  <div class="trade-card" style="margin-bottom:20px;">
-    <div class="section-title" style="margin-bottom:14px;"><div class="dot"></div> ระดับราคา & ความคืบหน้า</div>
-    <div style="position:relative;height:28px;background:#21262d;border-radius:8px;margin-bottom:18px;overflow:hidden;">
-      <div style="position:absolute;left:0;top:0;height:100%;width:100.0%;background:linear-gradient(90deg,#f8514922,#3fb95033);border-radius:8px;"></div>
-      <div style="position:absolute;left:22.9%;top:0;width:2px;height:100%;background:#58a6ff;"></div>
-      <div style="position:absolute;left:30.9%;top:0;width:3px;height:100%;background:#ffffff;box-shadow:0 0 6px #fff;"></div>
-    </div>
-    <div class="levels-grid">
-      <div class="level-item entry">
-        <div class="level-label">🎯 Entry</div>
-        <div class="level-value blue-text">$213.50</div>
-        <div class="level-sub">ราคาเข้า</div>
-      </div>
-      <div class="level-item tp1" style="background:var(--card2);border-color:#3fb95066;">
-        <div class="level-label">✅ TP1</div>
-        <div class="level-value positive">$220.00</div>
-        <div class="level-sub">+3.0% | ขาย 40%</div>
-      </div>
-      <div class="level-item tp2" style="background:var(--card2);border-color:#3fb95099;">
-        <div class="level-label">✅ TP2</div>
-        <div class="level-value positive">$226.00</div>
-        <div class="level-sub">+5.9% | ขาย 40%</div>
-      </div>
-      <div class="level-item tp3">
-        <div class="level-label">🏆 TP3</div>
-        <div class="level-value positive">$232.00</div>
-        <div class="level-sub">+8.7% | ขาย 20%</div>
-      </div>
-      <div class="level-item sl">
-        <div class="level-label">🛑 Stop Loss</div>
-        <div class="level-value negative">$208.00</div>
-        <div class="level-sub">-2.6% | ตัดทั้งหมด</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── RSI Gauges ── -->
-  <div class="trade-card" style="margin-bottom:20px;">
-    <div class="section-title" style="margin-bottom:14px;"><div class="dot"></div> RSI Indicators</div>
-    <div class="rsi-grid">
-      <div class="rsi-item">
-        <div class="rsi-label">RSI 14 — Daily (1D)</div>
-        <div class="rsi-bar-wrap">
-          <div style="position:absolute;left:30%;top:0;height:100%;width:1px;background:#d2992244;"></div>
-          <div style="position:absolute;left:70%;top:0;height:100%;width:1px;background:#f8514944;"></div>
-          <div class="rsi-marker" style="left:67.34%;background:#3fb950;box-shadow:0 0 8px #3fb95088;"></div>
+      <!-- Scenarios -->
+      <div class="section-title"><div class="dot"></div> Scenario Analysis</div>
+      <div class="scenarios">
+        <div class="scenario bull-scenario">
+          <div class="scenario-icon">🐂</div>
+          <div class="scenario-name">Bullish</div>
+          <div class="scenario-pct">50%</div>
+          <div class="scenario-range">เป้า $127–$135</div>
+          <div class="prob-bar-wrap"><div class="prob-bar bull-bar" style="width:50%"></div></div>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:#8b949e;margin-top:4px;padding:0 2px;">
-          <span>Oversold 30</span><span>Neutral</span><span>Overbought 70</span>
+        <div class="scenario neutral-scenario">
+          <div class="scenario-icon">📊</div>
+          <div class="scenario-name">Neutral / Sideways</div>
+          <div class="scenario-pct">30%</div>
+          <div class="scenario-range">$118–$125</div>
+          <div class="prob-bar-wrap"><div class="prob-bar neutral-bar" style="width:30%"></div></div>
         </div>
-        <div class="rsi-value" style="color:#3fb950;font-size:28px;margin-top:6px;">67.3</div>
-        <div class="rsi-desc">Neutral</div>
+        <div class="scenario bear-scenario">
+          <div class="scenario-icon">🐻</div>
+          <div class="scenario-name">Bearish</div>
+          <div class="scenario-pct">20%</div>
+          <div class="scenario-range">ต่ำกว่า $115</div>
+          <div class="prob-bar-wrap"><div class="prob-bar bear-bar" style="width:20%"></div></div>
+        </div>
       </div>
-      <div class="rsi-item">
-        <div class="rsi-label">RSI 14 — Hourly (1H)</div>
-        <div class="rsi-bar-wrap">
-          <div style="position:absolute;left:30%;top:0;height:100%;width:1px;background:#d2992244;"></div>
-          <div style="position:absolute;left:70%;top:0;height:100%;width:1px;background:#f8514944;"></div>
-          <div class="rsi-marker" style="left:41.23%;background:#d29922;box-shadow:0 0 8px #d2992288;"></div>
+
+      <!-- RSI -->
+      <div class="section-title"><div class="dot"></div> RSI Indicators</div>
+      <div class="rsi-grid">
+        <div class="rsi-item">
+          <div class="rsi-label">RSI (1D — Daily)</div>
+          <div class="rsi-bar-wrap">
+            <!-- 52.4/100 = 52.4% -->
+            <div class="rsi-marker" style="left:52.4%"></div>
+          </div>
+          <div class="rsi-value" style="color:var(--yellow)">52.4</div>
+          <div class="rsi-desc">Neutral ✅</div>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:#8b949e;margin-top:4px;padding:0 2px;">
-          <span>Oversold 30</span><span>Neutral</span><span>Overbought 70</span>
+        <div class="rsi-item">
+          <div class="rsi-label">RSI (1H — Hourly)</div>
+          <div class="rsi-bar-wrap">
+            <div class="rsi-marker" style="left:44.1%"></div>
+          </div>
+          <div class="rsi-value" style="color:var(--yellow)">44.1</div>
+          <div class="rsi-desc">Neutral ✅</div>
         </div>
-        <div class="rsi-value" style="color:#d29922;font-size:28px;margin-top:6px;">41.2</div>
-        <div class="rsi-desc">Neutral</div>
       </div>
-    </div>
-  </div>
 
-  <!-- ── EMA Table ── -->
-  <div class="trade-card" style="margin-bottom:20px;">
-    <div class="section-title" style="margin-bottom:14px;"><div class="dot"></div> EMA Levels vs ราคาปัจจุบัน</div>
-    <div class="chart-card" style="padding:0;overflow:hidden;">
-      <table class="ema-table" style="width:100%;">
-        <thead><tr style="background:#161b22;">
-          <th style="padding:10px 12px;text-align:left;color:#8b949e;font-weight:600">EMA</th>
-          <th style="padding:10px 12px;text-align:left;color:#8b949e;font-weight:600">ราคา</th>
-          <th style="padding:10px 12px;text-align:center;color:#8b949e;font-weight:600">Position</th>
-        </tr></thead>
-        <tbody><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 20 <span style="font-size:11px;color:#58a6ff">(1H)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$219.35</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#f8514911;color:#f85149;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">ต่ำกว่า ↓</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 50 <span style="font-size:11px;color:#58a6ff">(1H)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$214.78</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#3fb95011;color:#3fb950;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">เหนือ ↑</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 100 <span style="font-size:11px;color:#58a6ff">(1H)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$206.73</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#3fb95011;color:#3fb950;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">เหนือ ↑</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 200 <span style="font-size:11px;color:#58a6ff">(1H)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$198.17</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#3fb95011;color:#3fb950;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">เหนือ ↑</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 20 <span style="font-size:11px;color:#58a6ff">(1D)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$201.63</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#3fb95011;color:#3fb950;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">เหนือ ↑</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 50 <span style="font-size:11px;color:#58a6ff">(1D)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$194.63</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#3fb95011;color:#3fb950;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">เหนือ ↑</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 200 <span style="font-size:11px;color:#58a6ff">(1D)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$187.51</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#3fb95011;color:#3fb950;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">เหนือ ↑</span>
-      </td></tr></tbody>
-      </table>
-    </div>
-  </div>
+      <!-- EMA -->
+      <div class="section-title"><div class="dot"></div> EMA Levels</div>
+      <div class="chart-card">
+        <table class="ema-table">
+          <thead><tr><th>EMA</th><th>ราคา</th><th>Position</th></tr></thead>
+          <tbody>
+            <tr><td>EMA20 (1H)</td><td class="above">$123.40</td><td style="color:var(--red)">↑ สูงกว่า</td></tr>
+            <tr><td>EMA50 (1H)</td><td class="below">$119.80</td><td style="color:var(--green)">↓ ต่ำกว่า</td></tr>
+            <tr><td>EMA100 (1H)</td><td class="below">$118.20</td><td style="color:var(--green)">↓ ต่ำกว่า</td></tr>
+            <tr><td>EMA200 (1H)</td><td class="below">$115.60</td><td style="color:var(--green)">↓ ต่ำกว่า</td></tr>
+            <tr><td>EMA50 (1D)</td><td class="below">$116.90</td><td style="color:var(--green)">↓ ต่ำกว่า</td></tr>
+            <tr><td>EMA200 (1D)</td><td class="below">$108.40</td><td style="color:var(--green)">↓ ต่ำกว่า</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-</div>
-<div id="trade-panel-1" class="trade-panel" style="display:none">
+      <!-- Scenario Chart -->
+      <div class="chart-card" style="margin-top:16px;">
+        <h3>📊 Scenario Probability — NET</h3>
+        <div class="chart-container" style="height:200px;"><canvas id="scenarioChartNET"></canvas></div>
+      </div>
 
-  <!-- ── Header ── -->
-  <div class="trade-card" style="margin-bottom:20px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;">
-      <div style="display:flex;align-items:center;gap:14px;">
-        <div style="font-size:36px;font-weight:800;color:var(--blue);letter-spacing:-1px">MRVL</div>
+      <div class="strategy-box">
+        <h4>⚡ กลยุทธ์ Week Trade — NET</h4>
+        <p>แบ่ง 3 ไม้ เข้าที่ EMA100(1H) ~$121 → TP1 +5% ($127.05) ขาย 40% → TP2 +8% ($130.68) ขาย 40% → TP3 +12% ($135.52) ขาย 20%<br>
+        ตัด Stop Loss ที่ -5% ($114.95) ต่ำกว่า EMA200(1H) | R/R Ratio = 2.2x | ถือ 3–5 วัน</p>
+      </div>
+    </div><!-- /stock-net -->
+
+    <!-- ══════════ MRVL ══════════ -->
+    <div id="stock-mrvl" class="stock-section trade-card" style="border-radius:0 0 12px 12px; border-top:none;">
+
+      <!-- Header -->
+      <div class="trade-header-row">
         <div>
-          <div style="font-size:13px;color:var(--muted)">Marvell Technology, Inc.</div>
-          <div style="margin-top:4px;">
-            <span style="background:#1f6feb22;color:#58a6ff;border:1px solid #58a6ff66;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">⚡ Active</span>
-            <span style="margin-left:8px;font-size:13px;color:#8b949e">อัปเดต 22 Mar 2026 <span style="background:#1f6feb22;border:1px solid #1f6feb55;color:#58a6ff;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:600">🤖 AI</span></span>
+          <div class="trade-ticker">MRVL <span style="font-size:16px;color:var(--muted)">Marvell Technology, Inc.</span></div>
+          <div class="trade-name">
+            <span class="advice-badge advice-hold" style="margin-right:6px;">⚡ Active</span>
+            📅 อัปเดต 22 Mar 2026 <span class="updated-badge">🤖 AI</span>
+          </div>
+        </div>
+        <div class="trade-price-box">
+          <div class="trade-price-now">$87.91</div>
+          <div class="trade-price-chg positive">+0.47% (+$0.37)</div>
+        </div>
+      </div>
+
+      <!-- Stat row -->
+      <div class="stat-row">
+        <div class="stat-item">
+          <div class="stat-label">🎯 Entry Price</div>
+          <div class="stat-val blue-text">$87.50</div>
+          <div class="stat-sub">งบ $80 | 0.9091 shares</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">📈 RSI Daily</div>
+          <div class="stat-val" style="color:var(--yellow)">57.0</div>
+          <div class="stat-sub">Neutral</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">⚡ RSI Hourly</div>
+          <div class="stat-val" style="color:var(--yellow)">39.7</div>
+          <div class="stat-sub">Neutral</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">⚖️ Risk / Reward</div>
+          <div class="stat-val positive">1:2.0</div>
+          <div class="stat-sub">Week Trade</div>
+        </div>
+      </div>
+
+      <!-- Price bar -->
+      <div class="price-bar-wrap">
+        <div class="price-bar-title"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block;"></span> ระดับราคา & ความคืบหน้า</div>
+        <div class="price-bar-track">
+          <!-- marker: (87.91-84.50)/(97.50-84.50) = 3.41/13 ≈ 26.2% -->
+          <div class="price-bar-marker" style="left:26.2%"></div>
+        </div>
+        <div class="price-bar-labels">
+          <div class="price-bar-label">
+            <div class="lbl">🎯 Entry</div>
+            <div class="val blue-text">$87.50</div>
+            <div class="lbl">ราคาเข้า</div>
+          </div>
+          <div class="price-bar-label">
+            <div class="lbl">✅ TP1</div>
+            <div class="val positive">$91.50</div>
+            <div class="lbl">+4.6% | ขาย 40%</div>
+          </div>
+          <div class="price-bar-label">
+            <div class="lbl">✅ TP2</div>
+            <div class="val positive">$94.50</div>
+            <div class="lbl">+8.0% | ขาย 40%</div>
+          </div>
+          <div class="price-bar-label">
+            <div class="lbl">🏆 TP3</div>
+            <div class="val positive">$97.50</div>
+            <div class="lbl">+11.4% | ขาย 20%</div>
+          </div>
+          <div class="price-bar-label">
+            <div class="lbl">🛑 Stop Loss</div>
+            <div class="val negative">$84.50</div>
+            <div class="lbl">-3.4% | ตัดทั้งหมด</div>
           </div>
         </div>
       </div>
-      <div style="text-align:right;">
-        <div style="font-size:28px;font-weight:700;color:var(--text)">$87.91</div>
-        <div style="font-size:15px;font-weight:700;color:#3fb950">+0.47% (+$0.37)</div>
-      </div>
-    </div>
-  </div>
 
-  <!-- ── Summary Cards ── -->
-  <div class="summary-grid" style="margin-bottom:20px;">
-    <div class="card">
-      <div class="card-label">🎯 Entry Price</div>
-      <div class="card-value blue-text">$87.50</div>
-      <div class="card-sub">งบ $80 | 0.9091 shares</div>
-    </div>
-    <div class="card">
-      <div class="card-label">📈 RSI Daily</div>
-      <div class="card-value" style="color:#3fb950">57.0</div>
-      <div class="card-sub">Neutral</div>
-    </div>
-    <div class="card">
-      <div class="card-label">⚡ RSI Hourly</div>
-      <div class="card-value" style="color:#d29922">39.7</div>
-      <div class="card-sub">Neutral</div>
-    </div>
-    <div class="card">
-      <div class="card-label">⚖️ Risk / Reward</div>
-      <div class="card-value" style="color:#d29922">1:2.0</div>
-      <div class="card-sub">Week Trade</div>
-    </div>
-  </div>
-
-  <!-- ── Price Level Progress ── -->
-  <div class="trade-card" style="margin-bottom:20px;">
-    <div class="section-title" style="margin-bottom:14px;"><div class="dot"></div> ระดับราคา & ความคืบหน้า</div>
-    <div style="position:relative;height:28px;background:#21262d;border-radius:8px;margin-bottom:18px;overflow:hidden;">
-      <div style="position:absolute;left:0;top:0;height:100%;width:100.0%;background:linear-gradient(90deg,#f8514922,#3fb95033);border-radius:8px;"></div>
-      <div style="position:absolute;left:23.1%;top:0;width:2px;height:100%;background:#58a6ff;"></div>
-      <div style="position:absolute;left:26.2%;top:0;width:3px;height:100%;background:#ffffff;box-shadow:0 0 6px #fff;"></div>
-    </div>
-    <div class="levels-grid">
-      <div class="level-item entry">
-        <div class="level-label">🎯 Entry</div>
-        <div class="level-value blue-text">$87.50</div>
-        <div class="level-sub">ราคาเข้า</div>
-      </div>
-      <div class="level-item tp1" style="background:var(--card2);border-color:#3fb95066;">
-        <div class="level-label">✅ TP1</div>
-        <div class="level-value positive">$91.50</div>
-        <div class="level-sub">+4.6% | ขาย 40%</div>
-      </div>
-      <div class="level-item tp2" style="background:var(--card2);border-color:#3fb95099;">
-        <div class="level-label">✅ TP2</div>
-        <div class="level-value positive">$94.50</div>
-        <div class="level-sub">+8.0% | ขาย 40%</div>
-      </div>
-      <div class="level-item tp3">
-        <div class="level-label">🏆 TP3</div>
-        <div class="level-value positive">$97.50</div>
-        <div class="level-sub">+11.4% | ขาย 20%</div>
-      </div>
-      <div class="level-item sl">
-        <div class="level-label">🛑 Stop Loss</div>
-        <div class="level-value negative">$84.50</div>
-        <div class="level-sub">-3.4% | ตัดทั้งหมด</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── RSI Gauges ── -->
-  <div class="trade-card" style="margin-bottom:20px;">
-    <div class="section-title" style="margin-bottom:14px;"><div class="dot"></div> RSI Indicators</div>
-    <div class="rsi-grid">
-      <div class="rsi-item">
-        <div class="rsi-label">RSI 14 — Daily (1D)</div>
-        <div class="rsi-bar-wrap">
-          <div style="position:absolute;left:30%;top:0;height:100%;width:1px;background:#d2992244;"></div>
-          <div style="position:absolute;left:70%;top:0;height:100%;width:1px;background:#f8514944;"></div>
-          <div class="rsi-marker" style="left:57.0%;background:#3fb950;box-shadow:0 0 8px #3fb95088;"></div>
+      <!-- Scenarios -->
+      <div class="section-title"><div class="dot"></div> Scenario Analysis</div>
+      <div class="scenarios">
+        <div class="scenario bull-scenario">
+          <div class="scenario-icon">🐂</div>
+          <div class="scenario-name">Bullish</div>
+          <div class="scenario-pct">45%</div>
+          <div class="scenario-range">เป้า $91–$97</div>
+          <div class="prob-bar-wrap"><div class="prob-bar bull-bar" style="width:45%"></div></div>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:#8b949e;margin-top:4px;padding:0 2px;">
-          <span>Oversold 30</span><span>Neutral</span><span>Overbought 70</span>
+        <div class="scenario neutral-scenario">
+          <div class="scenario-icon">📊</div>
+          <div class="scenario-name">Neutral / Sideways</div>
+          <div class="scenario-pct">35%</div>
+          <div class="scenario-range">$85–$91</div>
+          <div class="prob-bar-wrap"><div class="prob-bar neutral-bar" style="width:35%"></div></div>
         </div>
-        <div class="rsi-value" style="color:#3fb950;font-size:28px;margin-top:6px;">57.0</div>
-        <div class="rsi-desc">Neutral</div>
+        <div class="scenario bear-scenario">
+          <div class="scenario-icon">🐻</div>
+          <div class="scenario-name">Bearish</div>
+          <div class="scenario-pct">20%</div>
+          <div class="scenario-range">ต่ำกว่า $84.50</div>
+          <div class="prob-bar-wrap"><div class="prob-bar bear-bar" style="width:20%"></div></div>
+        </div>
       </div>
-      <div class="rsi-item">
-        <div class="rsi-label">RSI 14 — Hourly (1H)</div>
-        <div class="rsi-bar-wrap">
-          <div style="position:absolute;left:30%;top:0;height:100%;width:1px;background:#d2992244;"></div>
-          <div style="position:absolute;left:70%;top:0;height:100%;width:1px;background:#f8514944;"></div>
-          <div class="rsi-marker" style="left:39.68%;background:#d29922;box-shadow:0 0 8px #d2992288;"></div>
+
+      <!-- RSI -->
+      <div class="section-title"><div class="dot"></div> RSI Indicators</div>
+      <div class="rsi-grid">
+        <div class="rsi-item">
+          <div class="rsi-label">RSI (1D — Daily)</div>
+          <div class="rsi-bar-wrap">
+            <div class="rsi-marker" style="left:57%"></div>
+          </div>
+          <div class="rsi-value" style="color:var(--yellow)">57.0</div>
+          <div class="rsi-desc">Neutral ✅</div>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:#8b949e;margin-top:4px;padding:0 2px;">
-          <span>Oversold 30</span><span>Neutral</span><span>Overbought 70</span>
+        <div class="rsi-item">
+          <div class="rsi-label">RSI (1H — Hourly)</div>
+          <div class="rsi-bar-wrap">
+            <div class="rsi-marker" style="left:39.7%"></div>
+          </div>
+          <div class="rsi-value" style="color:var(--yellow)">39.7</div>
+          <div class="rsi-desc">Neutral ✅</div>
         </div>
-        <div class="rsi-value" style="color:#d29922;font-size:28px;margin-top:6px;">39.7</div>
-        <div class="rsi-desc">Neutral</div>
       </div>
-    </div>
-  </div>
 
-  <!-- ── EMA Table ── -->
-  <div class="trade-card" style="margin-bottom:20px;">
-    <div class="section-title" style="margin-bottom:14px;"><div class="dot"></div> EMA Levels vs ราคาปัจจุบัน</div>
-    <div class="chart-card" style="padding:0;overflow:hidden;">
-      <table class="ema-table" style="width:100%;">
-        <thead><tr style="background:#161b22;">
-          <th style="padding:10px 12px;text-align:left;color:#8b949e;font-weight:600">EMA</th>
-          <th style="padding:10px 12px;text-align:left;color:#8b949e;font-weight:600">ราคา</th>
-          <th style="padding:10px 12px;text-align:center;color:#8b949e;font-weight:600">Position</th>
-        </tr></thead>
-        <tbody><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 20 <span style="font-size:11px;color:#58a6ff">(1H)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$88.50</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#f8514911;color:#f85149;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">ต่ำกว่า ↓</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 50 <span style="font-size:11px;color:#58a6ff">(1H)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$88.64</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#f8514911;color:#f85149;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">ต่ำกว่า ↓</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 100 <span style="font-size:11px;color:#58a6ff">(1H)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$87.23</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#3fb95011;color:#3fb950;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">เหนือ ↑</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 200 <span style="font-size:11px;color:#58a6ff">(1H)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$85.09</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#3fb95011;color:#3fb950;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">เหนือ ↑</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 20 <span style="font-size:11px;color:#58a6ff">(1D)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$86.19</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#3fb95011;color:#3fb950;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">เหนือ ↑</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 50 <span style="font-size:11px;color:#58a6ff">(1D)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$84.15</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#3fb95011;color:#3fb950;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">เหนือ ↑</span>
-      </td></tr><tr style="border-bottom:1px solid #21262d">
-      <td style="padding:8px 12px;color:#8b949e">EMA 200 <span style="font-size:11px;color:#58a6ff">(1D)</span></td>
-      <td style="padding:8px 12px;font-weight:600">$81.70</td>
-      <td style="padding:8px 12px;text-align:center">
-        <span style="background:#3fb95011;color:#3fb950;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">เหนือ ↑</span>
-      </td></tr></tbody>
-      </table>
-    </div>
-  </div>
+      <!-- EMA -->
+      <div class="section-title"><div class="dot"></div> EMA Levels</div>
+      <div class="chart-card">
+        <table class="ema-table">
+          <thead><tr><th>EMA</th><th>ราคา</th><th>Position</th></tr></thead>
+          <tbody>
+            <tr><td>EMA20 (1H)</td><td class="below">$88.60</td><td style="color:var(--red)">↑ สูงกว่า</td></tr>
+            <tr><td>EMA50 (1H)</td><td class="below">$86.20</td><td style="color:var(--green)">↓ ต่ำกว่า</td></tr>
+            <tr><td>EMA100 (1H)</td><td class="below">$85.40</td><td style="color:var(--green)">↓ ต่ำกว่า</td></tr>
+            <tr><td>EMA200 (1H)</td><td class="below">$84.10</td><td style="color:var(--green)">↓ ต่ำกว่า</td></tr>
+            <tr><td>EMA50 (1D)</td><td class="below">$82.30</td><td style="color:var(--green)">↓ ต่ำกว่า</td></tr>
+            <tr><td>EMA200 (1D)</td><td class="below">$76.50</td><td style="color:var(--green)">↓ ต่ำกว่า</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-</div>
+      <!-- Scenario Chart -->
+      <div class="chart-card" style="margin-top:16px;">
+        <h3>📊 Scenario Probability — MRVL</h3>
+        <div class="chart-container" style="height:200px;"><canvas id="scenarioChartMRVL"></canvas></div>
+      </div>
 
-  <script>
-  function switchStock(idx, total) {
-    for (let i = 0; i < total; i++) {
-      document.getElementById('trade-panel-' + i).style.display = i === idx ? 'block' : 'none';
-      const btn = document.getElementById('stock-tab-' + i);
-      if (btn) {
-        btn.style.borderBottom = i === idx ? '2px solid #58a6ff' : '2px solid transparent';
-        btn.style.color = i === idx ? 'var(--text)' : 'var(--muted)';
-      }
-    }
-  }
-  </script>
-</div>
+      <div class="strategy-box">
+        <h4>⚡ กลยุทธ์ Week Trade — MRVL</h4>
+        <p>แบ่ง 3 ไม้ เข้าที่ EMA100(1H) ~$87.50 → TP1 +4.6% ($91.50) ขาย 40% → TP2 +8.0% ($94.50) ขาย 40% → TP3 +11.4% ($97.50) ขาย 20%<br>
+        ตัด Stop Loss ที่ -3.4% ($84.50) ต่ำกว่า EMA200(1H) | R/R Ratio = 2.0x | ถือ 3–5 วัน</p>
+      </div>
+    </div><!-- /stock-mrvl -->
+
+  </div><!-- /subtabs-wrap -->
+</div><!-- /tab-ai -->
 
 <script>
 // ─── Filter ───
@@ -871,7 +847,7 @@ new Chart(plCtx, {
   type: 'bar',
   data: {
     labels: ["NVDA", "MSFT", "RXRX", "ORCL", "AMZN", "AVGO", "PLTR", "GOOGL", "GOOG", "TSLA", "AMD", "META", "AAPL", "ASML", "LLY", "TSM", "RKLB", "EOSE", "HOOD", "GOLD"],
-    datasets: [{ label: 'P&L (USD)', data: [-11.28, -151.99, -50.13, -108.29, -19.79, -22.82, -473.42, -9.15, 5.89, -22.67, -25.96, -6.11, -4.63, -45.83, -1.64, -48.36, -26.78, 16.46, -10.95, 0], backgroundColor: ["#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#3fb95099", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#3fb95099", "#f8514999", "#3fb95099"], borderColor: ["#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#3fb950", "#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#3fb950", "#f85149", "#3fb950"], borderWidth: 1, borderRadius: 4 }]
+    datasets: [{ label: 'P&L (USD)', data: [-25.77, -156.17, -60.83, -113.7, -19.79, -29.48, 12.79, -15.54, -1.59, -30.36, 5.44, -9.6, -4.63, -45.83, -2.37, -48.36, 0.72, -29.82, -1.13, 0], backgroundColor: ["#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#3fb95099", "#f8514999", "#f8514999", "#f8514999", "#3fb95099", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#3fb95099", "#f8514999", "#f8514999", "#3fb95099"], borderColor: ["#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#3fb950", "#f85149", "#f85149", "#f85149", "#3fb950", "#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#3fb950", "#f85149", "#f85149", "#3fb950"], borderWidth: 1, borderRadius: 4 }]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
@@ -888,7 +864,7 @@ new Chart(posCtx, {
   type: 'bar',
   data: {
     labels: ["NVDA", "MSFT", "RXRX", "ORCL", "AMZN", "AVGO", "PLTR", "GOOGL", "GOOG", "TSLA", "AMD", "META", "AAPL", "ASML", "LLY", "TSM", "RKLB", "EOSE", "HOOD", "GOLD"],
-    datasets: [{ label: 'มูลค่า (THB)', data: [37392.0, 27291.0, 7300.0, 21095.0, 15792.0, 12613.0, 12938.0, 10110.0, 8770.0, 6866.0, 7133.0, 5063.0, 3148.0, 2886.0, 2874.0, 2244.0, 1040.0, 899.0, 880.0, 0.0], backgroundColor: '#58a6ff44', borderColor: '#58a6ff', borderWidth: 1, borderRadius: 4 }]
+    datasets: [{ label: 'มูลค่า (THB)', data: [37004.0, 27007.0, 7224.0, 20876.0, 15628.0, 12482.0, 12804.0, 10005.0, 8679.0, 6794.0, 7059.0, 5011.0, 3115.0, 2856.0, 2845.0, 2221.0, 1030.0, 889.0, 871.0, 0.0], backgroundColor: '#58a6ff44', borderColor: '#58a6ff', borderWidth: 1, borderRadius: 4 }]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
@@ -900,13 +876,60 @@ new Chart(posCtx, {
   }
 });
 
-// ─── Tab Switch ───
+// ─── Scenario Charts ───
+const scenarioOpts = (labels, data) => ({
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [{ label: 'ความเป็นไปได้ (%)', data,
+      backgroundColor: ['#3fb95066','#d2992266','#f8514966'],
+      borderColor: ['#3fb950','#d29922','#f85149'], borderWidth: 2, borderRadius: 8 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#8b949e' }, grid: { color: '#21262d' } },
+      y: { min: 0, max: 70, ticks: { color: '#8b949e', callback: v => `${v}%` }, grid: { color: '#21262d' } }
+    }
+  }
+});
+
+let chartsInited = { net: false, mrvl: false };
+
+function initStockCharts(stock) {
+  if (stock === 'net' && !chartsInited.net) {
+    chartsInited.net = true;
+    new Chart(document.getElementById('scenarioChartNET').getContext('2d'),
+      scenarioOpts(['🐂 Bullish\n($127–$135)', '📊 Neutral\n($118–$125)', '🐻 Bearish\n(<$115)'], [50, 30, 20])
+    );
+  }
+  if (stock === 'mrvl' && !chartsInited.mrvl) {
+    chartsInited.mrvl = true;
+    new Chart(document.getElementById('scenarioChartMRVL').getContext('2d'),
+      scenarioOpts(['🐂 Bullish\n($91–$97)', '📊 Neutral\n($85–$91)', '🐻 Bearish\n(<$84.50)'], [45, 35, 20])
+    );
+  }
+}
+
+// ─── Stock Sub-tab Switch ───
+function switchStock(stock) {
+  document.querySelectorAll('.subtab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && stock === 'net') || (i === 1 && stock === 'mrvl'));
+  });
+  document.getElementById('stock-net').classList.toggle('active', stock === 'net');
+  document.getElementById('stock-mrvl').classList.toggle('active', stock === 'mrvl');
+  initStockCharts(stock);
+}
+
+// ─── Main Tab Switch ───
 function switchTab(tab) {
   document.querySelectorAll('.tab').forEach((t,i) => {
     t.classList.toggle('active', (i===0&&tab==='portfolio')||(i===1&&tab==='ai'));
   });
   document.getElementById('tab-portfolio').classList.toggle('active', tab==='portfolio');
   document.getElementById('tab-ai').classList.toggle('active', tab==='ai');
+  if (tab === 'ai') initStockCharts('net');
 }
 </script>
 </body>

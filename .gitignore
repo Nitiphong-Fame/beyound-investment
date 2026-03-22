@@ -1,0 +1,84 @@
+# ===========================
+# Excel / Spreadsheet Files (Financial Data - Do Not Commit)
+# ===========================
+*.xlsx
+**/*.xlsx
+*.xls
+*.xlsm
+*.xlsb
+
+# ===========================
+# Excel / Spreadsheet Files (Financial Data - Do Not Commit)
+# ===========================
+*.xlsx
+*.xls
+*.xlsm
+*.xlsb
+
+# Specifically ignore the annual income/expense file
+รายรับ_รายจ่าย_ประจำปี.xlsx
+
+# ===========================
+# OS Files
+# ===========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===========================
+# Node.js
+# ===========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm
+
+# ===========================
+# Environment Variables
+# ===========================
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# ===========================
+# Build Output
+# ===========================
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# ===========================
+# IDE / Editor
+# ===========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===========================
+# Logs
+# ===========================
+logs/
+*.log
+
+# ===========================
+# Python (if applicable)
+# ===========================
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
