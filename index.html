@@ -490,7 +490,7 @@
     <div class="subtabs">
       <div class="subtab active" onclick="switchStock('net')">
         <span class="subtab-label">NET</span>
-        <span class="subtab-pct pos">+0.9%</span>
+        <span class="subtab-pct neg">-0.7%</span>
       </div>
       <div class="subtab" onclick="switchStock('mrvl')">
         <span class="subtab-label">MRVL</span>
@@ -511,8 +511,8 @@
           </div>
         </div>
         <div class="trade-price-box">
-          <div class="trade-price-now">$122.50</div>
-          <div class="trade-price-chg positive">+0.90% (+$1.09)</div>
+          <div class="trade-price-now">$215.53</div>
+          <div class="trade-price-chg negative">-0.66% (-$1.44)</div>
         </div>
       </div>
 
@@ -520,22 +520,22 @@
       <div class="stat-row">
         <div class="stat-item">
           <div class="stat-label">🎯 Entry Price</div>
-          <div class="stat-val blue-text">$121.00</div>
-          <div class="stat-sub">Budget $80 | 0.6612 shares</div>
+          <div class="stat-val blue-text">$213.50</div>
+          <div class="stat-sub">Budget $120 | 0.5581 shares</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">📈 RSI Daily</div>
-          <div class="stat-val" style="color:var(--yellow)">52.4</div>
-          <div class="stat-sub">Neutral</div>
+          <div class="stat-val" style="color:var(--green)">67.34</div>
+          <div class="stat-sub">Bullish</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">⚡ RSI Hourly</div>
-          <div class="stat-val" style="color:var(--yellow)">44.1</div>
+          <div class="stat-val" style="color:var(--yellow)">41.23</div>
           <div class="stat-sub">Neutral</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">⚖️ Risk / Reward</div>
-          <div class="stat-val positive">1:2.2</div>
+          <div class="stat-val positive">1:2.4</div>
           <div class="stat-sub">Week Trade</div>
         </div>
       </div>
@@ -544,34 +544,34 @@
       <div class="price-bar-wrap">
         <div class="price-bar-title"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block;"></span> Price Levels & Progress</div>
         <div class="price-bar-track">
-          <!-- marker position: (current-SL)/(TP3-SL) = (122.50-114.95)/(135.52-114.95) = 7.55/20.57 ≈ 36.7% -->
-          <div class="price-bar-marker" style="left:36.7%"></div>
+          <!-- marker position: (current-SL)/(TP3-SL) = (215.53-208)/(232-208) = 7.53/24 ≈ 31.4% -->
+          <div class="price-bar-marker" style="left:31.4%"></div>
         </div>
         <div class="price-bar-labels">
           <div class="price-bar-label">
             <div class="lbl">🎯 Entry</div>
-            <div class="val blue-text">$121.00</div>
+            <div class="val blue-text">$213.50</div>
             <div class="lbl">Entry Price</div>
           </div>
           <div class="price-bar-label">
             <div class="lbl">✅ TP1</div>
-            <div class="val positive">$127.05</div>
-            <div class="lbl">+5.0% | Sell 40%</div>
+            <div class="val positive">$220.00</div>
+            <div class="lbl">+3.0% | Sell 40%</div>
           </div>
           <div class="price-bar-label">
             <div class="lbl">✅ TP2</div>
-            <div class="val positive">$130.68</div>
-            <div class="lbl">+8.0% | Sell 40%</div>
+            <div class="val positive">$226.00</div>
+            <div class="lbl">+5.9% | Sell 40%</div>
           </div>
           <div class="price-bar-label">
             <div class="lbl">🏆 TP3</div>
-            <div class="val positive">$135.52</div>
-            <div class="lbl">+12.0% | Sell 20%</div>
+            <div class="val positive">$232.00</div>
+            <div class="lbl">+8.7% | Sell 20%</div>
           </div>
           <div class="price-bar-label">
             <div class="lbl">🛑 Stop Loss</div>
-            <div class="val negative">$114.95</div>
-            <div class="lbl">-5.0% | Cut All</div>
+            <div class="val negative">$208.00</div>
+            <div class="lbl">-2.6% | Cut All</div>
           </div>
         </div>
       </div>
@@ -608,18 +608,17 @@
         <div class="rsi-item">
           <div class="rsi-label">RSI (1D — Daily)</div>
           <div class="rsi-bar-wrap">
-            <!-- 52.4/100 = 52.4% -->
-            <div class="rsi-marker" style="left:52.4%"></div>
+            <div class="rsi-marker" style="left:67.34%"></div>
           </div>
-          <div class="rsi-value" style="color:var(--yellow)">52.4</div>
-          <div class="rsi-desc">Neutral ✅</div>
+          <div class="rsi-value" style="color:var(--green)">67.34</div>
+          <div class="rsi-desc">Bullish 🔼</div>
         </div>
         <div class="rsi-item">
           <div class="rsi-label">RSI (1H — Hourly)</div>
           <div class="rsi-bar-wrap">
-            <div class="rsi-marker" style="left:44.1%"></div>
+            <div class="rsi-marker" style="left:41.23%"></div>
           </div>
-          <div class="rsi-value" style="color:var(--yellow)">44.1</div>
+          <div class="rsi-value" style="color:var(--yellow)">41.23</div>
           <div class="rsi-desc">Neutral ✅</div>
         </div>
       </div>
@@ -630,12 +629,12 @@
         <table class="ema-table">
           <thead><tr><th>EMA</th><th>Price</th><th>Position</th></tr></thead>
           <tbody>
-            <tr><td>EMA20 (1H)</td><td class="above">$123.40</td><td style="color:var(--red)">↑ Above</td></tr>
-            <tr><td>EMA50 (1H)</td><td class="below">$119.80</td><td style="color:var(--green)">↓ Below</td></tr>
-            <tr><td>EMA100 (1H)</td><td class="below">$118.20</td><td style="color:var(--green)">↓ Below</td></tr>
-            <tr><td>EMA200 (1H)</td><td class="below">$115.60</td><td style="color:var(--green)">↓ Below</td></tr>
-            <tr><td>EMA50 (1D)</td><td class="below">$116.90</td><td style="color:var(--green)">↓ Below</td></tr>
-            <tr><td>EMA200 (1D)</td><td class="below">$108.40</td><td style="color:var(--green)">↓ Below</td></tr>
+            <tr><td>EMA20 (1H)</td><td class="above">$219.35</td><td style="color:var(--red)">↑ Above</td></tr>
+            <tr><td>EMA50 (1H)</td><td class="below">$214.78</td><td style="color:var(--green)">↓ Below</td></tr>
+            <tr><td>EMA100 (1H)</td><td class="below">$206.73</td><td style="color:var(--green)">↓ Below</td></tr>
+            <tr><td>EMA200 (1H)</td><td class="below">$198.17</td><td style="color:var(--green)">↓ Below</td></tr>
+            <tr><td>EMA50 (1D)</td><td class="below">$194.63</td><td style="color:var(--green)">↓ Below</td></tr>
+            <tr><td>EMA200 (1D)</td><td class="below">$187.51</td><td style="color:var(--green)">↓ Below</td></tr>
           </tbody>
         </table>
       </div>
@@ -648,8 +647,8 @@
 
       <div class="strategy-box">
         <h4>⚡ Week Trade Strategy — NET</h4>
-        <p>Split 3 tranches, enter at EMA100(1H) ~$121 → TP1 +5% ($127.05) Sell 40% → TP2 +8% ($130.68) Sell 40% → TP3 +12% ($135.52) Sell 20%<br>
-        Stop Loss at -5% ($114.95) below EMA200(1H) | R/R Ratio = 2.2x | Hold 3–5 days</p>
+        <p>Single entry at EMA50(1H) ~$213.50 when RSI(1H) oversold → TP1 +3.0% ($220) Sell 40% → TP2 +5.9% ($226) Sell 40% → TP3 +8.7% ($232) Sell 20%<br>
+        Stop Loss at -2.6% ($208) below EMA50(1H) | R/R Ratio = 2.4x | Hold 3–5 days</p>
       </div>
     </div><!-- /stock-net -->
 
@@ -711,12 +710,12 @@
           <div class="price-bar-label">
             <div class="lbl">✅ TP1</div>
             <div class="val positive">$91.50</div>
-            <div class="lbl">+4.6% | Sell 40%</div>
+            <div class="lbl">+4.6% | Sell 50%</div>
           </div>
           <div class="price-bar-label">
             <div class="lbl">✅ TP2</div>
             <div class="val positive">$94.50</div>
-            <div class="lbl">+8.0% | Sell 40%</div>
+            <div class="lbl">+8.0% | Sell 30%</div>
           </div>
           <div class="price-bar-label">
             <div class="lbl">🏆 TP3</div>
@@ -802,7 +801,7 @@
 
       <div class="strategy-box">
         <h4>⚡ Week Trade Strategy — MRVL</h4>
-        <p>Split 3 tranches, enter at EMA100(1H) ~$87.50 → TP1 +4.6% ($91.50) Sell 40% → TP2 +8.0% ($94.50) Sell 40% → TP3 +11.4% ($97.50) Sell 20%<br>
+        <p>Confirm entry: dip $86.50–87.50 RSI&lt;40 OR breakout close &gt;EMA20($88.50) → TP1 +4.6% ($91.50) Sell 50% → TP2 +8.0% ($94.50) Sell 30% → TP3 +11.4% ($97.50) Sell 20%<br>
         Stop Loss at -3.4% ($84.50) below EMA200(1H) | R/R Ratio = 2.0x | Hold 3–5 days</p>
       </div>
     </div><!-- /stock-mrvl -->
