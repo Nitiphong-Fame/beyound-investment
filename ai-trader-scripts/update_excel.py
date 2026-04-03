@@ -24,12 +24,32 @@ def update_portfolio_sheet(ws, stocks: dict, usdthb: float, updated_at: str):
     # Update USD/THB (row 2, col G = column 7)
     ws.cell(row=2, column=7).value = usdthb
 
+    import re as _re
+    # Get set of merged cell ranges (master cells only are writable)
+    merged_ranges = ws.merged_cells.ranges
+
+    def is_merged_non_master(row, col):
+        """Return True if cell is part of a merged range but NOT the master cell."""
+        from openpyxl.utils import get_column_letter
+        cell = ws.cell(row=row, column=col)
+        return hasattr(cell, 'value') is False or type(cell).__name__ == 'MergedCell'
+
+    def safe_set(row, col, value, wrap=False):
+        try:
+            c = ws.cell(row=row, column=col)
+            c.value = value
+            if wrap:
+                c.alignment = Alignment(wrap_text=True)
+        except AttributeError:
+            pass  # merged cell — skip silently
+
     for row_idx in range(5, 70):
         sym_cell = ws.cell(row=row_idx, column=2).value
         if not sym_cell or not isinstance(sym_cell, str):
             continue
         sym = sym_cell.strip()
-        if sym in ("หุ้น", "รวม", "ชื่อ"):
+        # Skip header/formula/special rows
+        if sym in ("หุ้น", "รวม", "ชื่อ", "Stock", "20 Stocks") or sym.startswith("=") or sym == "—":
             continue
 
         if sym in stocks:
@@ -37,14 +57,13 @@ def update_portfolio_sheet(ws, stocks: dict, usdthb: float, updated_at: str):
             price = d["price"]
 
             # Col D = current price (column 4)
-            ws.cell(row=row_idx, column=4).value = price
+            safe_set(row_idx, 4, price)
 
             # Col I = AI Advice (column 9)
-            ws.cell(row=row_idx, column=9).value = d.get("ai_advice", "")
-            ws.cell(row=row_idx, column=9).alignment = Alignment(wrap_text=True)
+            safe_set(row_idx, 9, d.get("ai_advice", ""), wrap=True)
 
             # Col K = updated date (column 11)
-            ws.cell(row=row_idx, column=11).value = f"🆕 {TODAY_SHORT}"
+            safe_set(row_idx, 11, f"🆕 {TODAY_SHORT}")
 
             updated += 1
         else:
@@ -254,12 +273,18 @@ def main():
 
     # Update sheets — respecting the --sheet scope argument
     if args.sheet in ("portfolio", "both"):
-        if "พอร์ตหุ้นรายตัว" in wb.sheetnames:
-            ws_port = wb["พอร์ตหุ้นรายตัว"]
+        # Try both sheet names for compatibility
+        port_sheet_name = None
+        for name in ("Portfolio", "พอร์ตหุ้นรายตัว"):
+            if name in wb.sheetnames:
+                port_sheet_name = name
+                break
+        if port_sheet_name:
+            ws_port = wb[port_sheet_name]
             update_portfolio_sheet(ws_port, stocks, usdthb, updated_at)
             update_portfolio_summary(ws_port, stocks, usdthb, updated_at)
         else:
-            print("   ⚠️  Sheet 'พอร์ตหุ้นรายตัว' not found — skipped")
+            print("   ⚠️  Portfolio sheet not found — skipped")
 
     if args.sheet in ("ai", "both"):
         if "AI Trading" in wb.sheetnames:

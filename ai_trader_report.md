@@ -1,78 +1,70 @@
-# 🤖 AI Trader Daily Report — 24 Mar 2026
+# 🤖 AI Trader Daily Report — 3 Apr 2026
 
-**Run time:** 24 Mar 2026 (Scheduled Task)
-**USD/THB:** 32.61
-**Source:** WebSearch (Yahoo Finance & Google Finance blocked via proxy)
-
----
-
-## 📈 Portfolio Update — 20 Stocks
-
-| # | Symbol | Price | Change | vs Cost | Signal |
-|---|--------|-------|--------|---------|--------|
-| 1 | NVDA | $176.46 | +2.2% | -0.1% | 🟡 Watch |
-| 2 | MSFT | $386.00 | -1.8% | -15.0% | 🟡 Watch |
-| 3 | RXRX | $3.16 | -2.8% | -24.5% | 🔴 Cut Loss |
-| 4 | ORCL | $155.10 | +3.2% | -12.1% | 🟡 Watch |
-| 5 | AMZN | $212.14 | +3.3% | -0.8% | 🟢 Hold |
-| 6 | AVGO | $312.00 | +0.5% | -6.8% | 🟡 Watch |
-| 7 | PLTR | $160.92 | +0.7% | ✅ SOLD | — |
-| 8 | GOOGL | $303.50 | -1.8% | -4.1% | 🟡 Watch |
-| 9 | GOOG | $301.80 | +1.0% | +0.4% | 🟢 Hold |
-| 10 | TSLA | $367.96 | 0.0% | -12.8% | 🟡 Watch |
-| 11 | AMD | $204.84 | +1.7% | +2.4% | 🟢 Hold |
-| 12 | META | $593.90 | 0.0% | -5.9% | 🟡 Watch |
-| 13 | AAPL | $247.99 | -1.1% | -5.0% | 🟢 Hold |
-| 14 | ASML | $1,316.97 | -4.3% | -1.5% | 🟡 Watch |
-| 15 | LLY | $906.70 | 0.0% | -3.9% | 🟢 Hold |
-| 16 | TSM | $329.24 | 0.0% | -3.4% | 🟢 Hold |
-| 17 | RKLB | $68.18 | -0.1% | +3.8% | 🟢 Hold/Add |
-| 18 | EOSE | $5.25 | 0.0% | -52.4% | 🔴 High Risk |
-| 19 | HOOD | $73.29 | +2.6% | -0.8% | 🟡 Watch |
-| 20 | GOLD | $37.39 | +0.7% | -99.2%* | 🟢 Hold |
-
-*GOLD cost $4658 is a data anomaly (position allocation, not per-share cost)
+## 💱 Market Data
+- **USD/THB:** 32.73 (range today: 32.517–32.767)
+- **Market Context:** Tech stocks broadly rebounded Thursday after President Trump's speech on Iran. Multiple Big Tech names (NVDA, AAPL, GOOGL, META, AMD, PLTR) on Iran Revolutionary Guard Corps potential target list.
 
 ---
 
-## 🏆 Top Gainers Today
-1. **AMZN** +3.3% — AWS + ad revenue recovery
-2. **ORCL** +3.2% — Cloud backlog re-rating
-3. **NVDA** +2.2% — GTC conference momentum (Jensen Huang news)
+## 📈 Portfolio Price Update (20 Stocks)
 
-## 📉 Top Losers Today
-1. **ASML** -4.3% — Macro pressure, chip export concerns
-2. **MSFT** -1.8% — Slight pullback after recent recovery
-3. **RXRX** -2.8% — Bio/AI speculative, continued weakness
-
----
-
-## ⚠️ Positions to Review
-- **RXRX** — Down 24.5% from cost, oversold RSI 36. Reassess.
-- **EOSE** — Down 52.4% from cost, speculative energy storage. Cut or hold small.
-- **TSLA** — Down 12.8%, below EMA20. Set stop below $360.
-
-## ✅ Positions Performing Well
-- **GOOG** — Near breakeven (+0.4% vs cost)
-- **AMD** — Profitable (+2.4% vs cost)
-- **RKLB** — Profitable (+3.8% vs cost)
-
----
-
-## 📊 Market Context
-- Chip stocks up on Trump pausing Iran strikes
-- NVDA recovering from Supermicro/chip smuggling news (Mar 23)
-- ASML sold off on macro/export fears
-- Gold elevated, benefiting Barrick (GOLD)
-- Tech broadly mixed — rotation between sectors
+| Symbol | Price (USD) | Cost Basis | P&L % | Signal |
+|--------|------------|------------|--------|--------|
+| NVDA   | $167.91    | $176.65    | -4.95% | Below EMA — Bearish |
+| MSFT   | $362.92    | $454.42    | -20.14% | Above EMA — Mild Bullish |
+| RXRX   | $3.12      | $4.19      | -25.49% | Below EMA — Bearish |
+| ORCL   | $138.50    | $176.47    | -21.51% | Below EMA — Bearish |
+| AMZN   | $201.62    | $213.91    | -5.75% | Above EMA — Mild Bullish |
+| AVGO   | $293.56    | $334.61    | -12.27% | Above EMA — Bullish |
+| PLTR   | $148.62    | $145.73    | +1.98% | Above EMA — Bullish |
+| GOOGL  | $292.00    | $316.36    | -7.70% | Below EMA — Bearish |
+| GOOG   | $292.50    | $300.59    | -2.69% | Below EMA — Bearish |
+| TSLA   | $363.77    | $421.98    | -13.79% | Below EMA — Bearish |
+| AMD    | $216.35    | $200.07    | +8.14% | Above EMA — Bullish |
+| META   | $573.83    | $631.02    | -9.06% | Below EMA — Bearish |
+| AAPL   | $254.99    | $261.11    | -2.34% | Below EMA — Bearish |
+| ASML   | $1,232.60  | $1,336.56  | -7.78% | Above EMA — Slight Bullish |
+| LLY    | $926.56    | $943.03    | -1.75% | Below EMA — Bearish |
+| TSM    | $339.80    | $340.96    | -0.34% | Below EMA — Slight Bearish |
+| RKLB   | $66.55     | $65.69     | +1.31% | Above EMA — Bullish |
+| EOSE   | $11.10     | $11.03     | +0.63% | Above EMA — Mild Bullish |
+| HOOD   | $70.17     | $73.90     | -5.05% | Above EMA — Mild Bullish |
+| GOLD   | $42.20     | —          | —      | Above EMA — Bullish |
 
 ---
 
-## 📁 Files Updated
-- ✅ `beyond-investment.xlsx` — Portfolio sheet prices + AI Advice
-- ✅ `index.html` — Dashboard rebuilt (Portfolio tab default)
+## 🏆 Top 3 Gainers (vs Cost Basis)
+1. **AMD** +8.14% @ $216.35 — Tech sector rebound, up +3.33% today
+2. **PLTR** +1.98% @ $148.62 — Stellantis 5-year AI partnership expansion
+3. **RKLB** +1.31% @ $66.55 — Holding above EMA support
+
+## 📉 Top 3 Losers (vs Cost Basis)
+1. **RXRX** -25.49% @ $3.12 — Biotech under pressure, below all EMAs
+2. **ORCL** -21.51% @ $138.50 — Mass layoffs announced, AI restructuring
+3. **MSFT** -20.14% @ $362.92 — High cost basis; technicals improving
 
 ---
 
-> ⚠️ Not investment advice. Data sourced via WebSearch (Yahoo/Google Finance unavailable via proxy).
-> Say **push-github** to commit and push to GitHub.
+## 🎯 Current Week Trade
+**Ticker:** NET | See Sheet 2 (AI Trading) for entry/exit strategy.
+
+---
+
+## 🗞️ Key Headlines
+- AVGO: AI revenue surged 100%+ to $8.4B, guiding $10B+ next quarter
+- PLTR: +6.2% on 5-year Stellantis deal for Foundry + AIP expansion
+- TSLA: Q1 deliveries miss estimates — 358,023 vs 364,645 expected
+- ORCL: Mass layoffs as Oracle restructures headcount for AI investments
+- LLY: FDA approves Foundayo oral GLP-1 pill; profit-taking causes -6.33% drop
+- GOLD: Barrick rises on Iran-driven gold demand; $42B NewCo spin-off planned
+- AMZN: Fuel surcharge added for FBA sellers amid Iran energy price spike
+
+---
+
+## ✅ Update Status
+- Excel Portfolio sheet: ✅ 20 stocks updated
+- Dashboard index.html: ✅ Page 1 rebuilt, Page 2 preserved
+- Price method: WebSearch (Yahoo/Google Finance blocked by proxy)
+- USD/THB: 32.73 (fresh)
+
+*Say **push-github** when ready to commit. Not investment advice.*
