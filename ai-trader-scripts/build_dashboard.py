@@ -304,8 +304,19 @@ def build_html(portfolio: list, stocks_data: dict, trade_data: dict,
     </div>
   </div>"""
 
-    # Build all trade cards
-    trade_cards_html = "".join(build_trade_card(t, i) for i, t in enumerate(week_trades))
+    # Build all trade cards — use sub-tabs when 2+ stocks
+    if len(week_trades) > 1:
+        tab_buttons = "".join(
+            f'<div class="stock-tab{"  active" if i == 0 else ""}" onclick="switchStock(\'{t["sym"]}\')">{t["sym"]}</div>'
+            for i, t in enumerate(week_trades)
+        )
+        tab_sections = "".join(
+            f'<div id="stock-section-{t["sym"]}" class="stock-section{"  active" if i == 0 else ""}">{build_trade_card(t, i)}</div>'
+            for i, t in enumerate(week_trades)
+        )
+        trade_cards_html = f'<div class="stock-tabs">{tab_buttons}</div>{tab_sections}'
+    else:
+        trade_cards_html = "".join(build_trade_card(t, i) for i, t in enumerate(week_trades))
 
     # Summary bar for AI tab
     syms_display = " / ".join(t["sym"] for t in week_trades) if week_trades else "N/A"
@@ -427,6 +438,11 @@ def build_html(portfolio: list, stocks_data: dict, trade_data: dict,
   .strategy-box p {{ font-size: 13px; color: var(--muted); line-height: 1.7; }}
   .disclaimer {{ background: #9e6a0311; border: 1px solid #9e6a0333; color: var(--yellow); padding: 10px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; }}
   .updated-badge {{ background: #1f6feb22; border: 1px solid #1f6feb55; color: var(--blue); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }}
+  .stock-tabs {{ display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; border-bottom: 1px solid var(--border); padding-bottom: 12px; }}
+  .stock-tab {{ padding: 8px 24px; border-radius: 8px; border: 1px solid var(--border); background: var(--card2); color: var(--muted); font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px; }}
+  .stock-tab:hover {{ color: var(--text); border-color: #58a6ff66; }}
+  .stock-tab.active {{ background: #1f6feb33; border-color: var(--blue); color: var(--blue); box-shadow: 0 0 0 1px #1f6feb44; }}
+  .stock-section {{ display: none; }} .stock-section.active {{ display: block; }}
   @media (max-width: 768px) {{
     .main {{ padding: 16px; }}
     .charts-grid,.scenarios {{ grid-template-columns: 1fr; }}
@@ -630,6 +646,17 @@ new Chart(posCtx, {{
 
 // ─── Scenario Chart (per-trade inline bars — no canvas needed) ───
 function initScenarioChart() {{ /* no-op: scenarios rendered inline per trade card */ }}
+
+// ─── Stock Sub-tab Switch ───
+function switchStock(sym) {{
+  document.querySelectorAll('.stock-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.stock-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.stock-tab').forEach(t => {{
+    if (t.textContent.trim() === sym) t.classList.add('active');
+  }});
+  const sec = document.getElementById('stock-section-' + sym);
+  if (sec) sec.classList.add('active');
+}}
 
 // ─── Tab Switch ───
 function switchTab(tab) {{

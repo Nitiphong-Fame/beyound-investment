@@ -3,450 +3,515 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📊 Stock Portfolio Dashboard</title>
+<title>Portfolio Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+  /* ── Design Tokens ─────────────────────────────── */
   :root {
-    --bg: #0d1117; --card: #161b22; --card2: #1c2128; --border: #30363d;
-    --text: #e6edf3; --muted: #8b949e; --green: #3fb950; --red: #f85149;
-    --yellow: #d29922; --blue: #58a6ff; --purple: #bc8cff; --orange: #ffa657;
+    --bg:       #05070d;
+    --surface:  #080c14;
+    --card:     #0d1221;
+    --card2:    #111827;
+    --card3:    #161f30;
+    --border:   #1a2540;
+    --border2:  #243050;
+    --text:     #e2e8f0;
+    --muted:    #64748b;
+    --muted2:   #94a3b8;
+    --green:    #22c55e;
+    --green2:   #4ade80;
+    --red:      #ef4444;
+    --red2:     #f87171;
+    --yellow:   #f59e0b;
+    --blue:     #3b82f6;
+    --blue2:    #60a5fa;
+    --purple:   #a78bfa;
+    --orange:   #fb923c;
+    --radius:   14px;
+    --shadow:   0 4px 24px #00000066;
+    --glow-blue: 0 0 20px #3b82f618;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
-  .header { background: linear-gradient(135deg,#0d1117,#161b22,#1c2128); border-bottom: 1px solid var(--border); padding: 24px 32px; display: flex; align-items: center; gap: 16px; }
-  .header-icon { font-size: 40px; }
-  .header h1 { font-size: 24px; font-weight: 700; color: var(--blue); }
-  .header p { font-size: 13px; color: var(--muted); margin-top: 4px; }
-  .badge { background: #1f6feb22; border: 1px solid #1f6feb66; color: var(--blue); padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-left: auto; }
-  .tabs { display: flex; border-bottom: 1px solid var(--border); padding: 0 32px; background: var(--card); }
-  .tab { padding: 14px 24px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; transition: all 0.2s; }
+
+  /* ── Reset ─────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Scrollbar ─────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* ── Header ────────────────────────────────────── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(5,7,13,0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    height: 64px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .header-logo {
+    display: flex; align-items: center; gap: 10px; text-decoration: none;
+  }
+  .header-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 16px #3b82f640;
+  }
+  .header h1 {
+    font-size: 16px; font-weight: 700;
+    background: linear-gradient(90deg, #e2e8f0, #94a3b8);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.3px;
+  }
+  .header-divider {
+    width: 1px; height: 24px; background: var(--border); margin: 0 4px;
+  }
+  .header p {
+    font-size: 12px; color: var(--muted); font-weight: 400;
+  }
+  .badge {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #1d4ed815, #3b82f615);
+    border: 1px solid #3b82f630;
+    color: var(--blue2); padding: 5px 12px;
+    border-radius: 99px; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .badge::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green); animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; } 50% { opacity: 0.4; }
+  }
+  #live-clock {
+    font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  /* ── Navigation Tabs ───────────────────────────── */
+  .tabs {
+    display: flex; align-items: center; gap: 2px;
+    padding: 0 40px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .tab {
+    display: flex; align-items: center; gap: 7px;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-size: 13px; font-weight: 500;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    user-select: none;
+    letter-spacing: -0.1px;
+  }
   .tab:hover { color: var(--text); }
-  .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
-  .main { padding: 24px 32px; max-width: 1600px; margin: 0 auto; }
-  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 16px; margin-bottom: 24px; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: border-color 0.2s; }
-  .card:hover { border-color: #58a6ff44; }
-  .card-label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-  .card-value { font-size: 26px; font-weight: 700; }
-  .card-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
-  .positive { color: var(--green); } .negative { color: var(--red); }
-  .neutral { color: var(--yellow); } .blue-text { color: var(--blue); }
-  .section-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
-  .section-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
-  .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 32px; }
+  .tab.active {
+    color: var(--blue2);
+    border-bottom-color: var(--blue);
+    font-weight: 600;
+  }
+
+  /* ── Layout ────────────────────────────────────── */
+  .main {
+    padding: 28px 40px;
+    max-width: 1680px;
+    margin: 0 auto;
+  }
+
+  /* ── Summary Cards ─────────────────────────────── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #3b82f608 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .card:hover {
+    border-color: #3b82f630;
+    box-shadow: var(--glow-blue);
+    transform: translateY(-1px);
+  }
+  .card-label {
+    font-size: 11px; color: var(--muted); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;
+  }
+  .card-value { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
+  .card-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  /* ── Color Utilities ───────────────────────────── */
+  .positive { color: var(--green2); }
+  .negative { color: var(--red2); }
+  .neutral  { color: var(--yellow); }
+  .blue-text { color: var(--blue2); }
+
+  /* ── Section Title ─────────────────────────────── */
+  .section-title {
+    font-size: 15px; font-weight: 700;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+    letter-spacing: -0.2px;
+  }
+  .section-title .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--blue);
+    box-shadow: 0 0 8px var(--blue);
+  }
+
+  /* ── Tables ────────────────────────────────────── */
+  .table-wrap {
+    overflow-x: auto; overflow-y: visible;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 32px;
+    background: var(--card);
+  }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead th { background: var(--card2); padding: 12px 14px; text-align: left; font-weight: 600; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); white-space: nowrap; }
-  tbody tr { border-bottom: 1px solid #21262d; transition: background 0.15s; }
-  tbody tr:hover { background: #1c2128; }
+  thead th {
+    background: var(--card2);
+    padding: 11px 14px;
+    text-align: left;
+    font-weight: 600; color: var(--muted);
+    font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.7px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  thead tr { background: var(--card2); }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+  }
+  tbody tr:hover { background: #0f1929; }
   tbody tr:last-child { border-bottom: none; }
   td { padding: 12px 14px; vertical-align: middle; }
-  .ticker { font-weight: 700; font-size: 14px; color: var(--blue); }
-  .advice-badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-  .advice-hold { background: #1f6feb22; color: var(--blue); border: 1px solid #1f6feb44; }
-  .advice-increase { background: #1a7f3722; color: var(--green); border: 1px solid #1a7f3744; }
-  .advice-reduce { background: #9e6a0322; color: var(--yellow); border: 1px solid #9e6a0344; }
-  .advice-cutloss { background: #da363322; color: var(--red); border: 1px solid #da363344; }
-  .advice-longterm { background: #bc8cff22; color: var(--purple); border: 1px solid #bc8cff44; }
-  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
-  .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-  .chart-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+
+  /* ── Ticker Badge ──────────────────────────────── */
+  .ticker {
+    font-weight: 800; font-size: 13px;
+    color: var(--blue2);
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Advice Badges ─────────────────────────────── */
+  .advice-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 99px;
+    font-size: 10.5px; font-weight: 600; white-space: nowrap;
+    letter-spacing: 0.2px;
+  }
+  .advice-hold      { background: #1d4ed812; color: var(--blue2);   border: 1px solid #3b82f630; }
+  .advice-increase  { background: #16a34a12; color: var(--green2);  border: 1px solid #22c55e30; }
+  .advice-reduce    { background: #d9770612; color: var(--yellow);  border: 1px solid #f59e0b30; }
+  .advice-cutloss   { background: #dc262612; color: var(--red2);    border: 1px solid #ef444430; }
+  .advice-longterm  { background: #7c3aed12; color: var(--purple);  border: 1px solid #a78bfa30; }
+
+  /* ── Charts ────────────────────────────────────── */
+  .charts-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 20px; margin-bottom: 32px;
+  }
+  .chart-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px;
+  }
+  .chart-card h3 {
+    font-size: 14px; font-weight: 700;
+    margin-bottom: 18px; color: var(--text);
+    letter-spacing: -0.2px;
+  }
   .chart-container { position: relative; height: 280px; }
-  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-  .filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--card2); color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-  .filter-btn:hover,.filter-btn.active { background: #1f6feb33; border-color: var(--blue); color: var(--blue); }
-  .section { display: none; } .section.active { display: block; }
-  .trade-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
-  .trade-ticker { font-size: 36px; font-weight: 800; color: var(--blue); }
-  .levels-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 12px; margin: 16px 0; }
-  .level-item { background: var(--card2); border-radius: 8px; padding: 14px; border-left: 3px solid; }
-  .level-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
-  .level-value { font-size: 20px; font-weight: 700; }
-  .level-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .entry { border-color: var(--blue); } .tp1 { border-color: #3fb95099; }
-  .tp2 { border-color: var(--green); } .tp3 { border-color: #2ea04399; }
+
+  /* ── Filter Bar ────────────────────────────────── */
+  .filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .filter-btn {
+    padding: 5px 14px; border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--card2); color: var(--muted);
+    font-size: 12px; font-weight: 500; cursor: pointer;
+    transition: all 0.2s; font-family: inherit;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: #1d4ed820; border-color: var(--blue);
+    color: var(--blue2);
+  }
+
+  /* ── Show/hide sections ────────────────────────── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── AI Trade Cards ────────────────────────────── */
+  .trade-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 20px;
+  }
+  .trade-ticker { font-size: 34px; font-weight: 900; color: var(--blue2); letter-spacing: -1px; }
+  .levels-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; margin: 16px 0;
+  }
+  .level-item {
+    background: var(--card2); border-radius: 10px;
+    padding: 14px 16px; border-left: 3px solid;
+  }
+  .level-label { font-size: 10.5px; color: var(--muted); font-weight: 600; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .level-value { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+  .level-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .entry { border-color: var(--blue); }
+  .tp1 { border-color: #22c55e77; }
+  .tp2 { border-color: var(--green); }
+  .tp3 { border-color: #16a34a; }
   .sl { border-color: var(--red); }
   .scenarios { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 20px 0; }
-  .scenario { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
-  .scenario-icon { font-size: 24px; margin-bottom: 8px; }
-  .scenario-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .scenario-pct { font-size: 28px; font-weight: 800; margin: 8px 0; }
-  .scenario-range { font-size: 12px; color: var(--muted); }
-  .bull-scenario { border-color: #3fb95044; } .bull-scenario .scenario-pct { color: var(--green); }
-  .neutral-scenario { border-color: #d2992244; } .neutral-scenario .scenario-pct { color: var(--yellow); }
-  .bear-scenario { border-color: #f8514944; } .bear-scenario .scenario-pct { color: var(--red); }
-  .prob-bar-wrap { height: 6px; background: #21262d; border-radius: 3px; margin-top: 8px; overflow: hidden; }
-  .prob-bar { height: 100%; border-radius: 3px; }
+  .scenario { background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-align: center; }
+  .scenario-icon { font-size: 22px; margin-bottom: 8px; }
+  .scenario-name { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: var(--muted2); }
+  .scenario-pct { font-size: 28px; font-weight: 900; margin: 8px 0; letter-spacing: -1px; }
+  .scenario-range { font-size: 11px; color: var(--muted); }
+  .bull-scenario { border-color: #22c55e30; } .bull-scenario .scenario-pct { color: var(--green2); }
+  .neutral-scenario { border-color: #f59e0b30; } .neutral-scenario .scenario-pct { color: var(--yellow); }
+  .bear-scenario { border-color: #ef444430; } .bear-scenario .scenario-pct { color: var(--red2); }
+  .prob-bar-wrap { height: 5px; background: var(--border); border-radius: 99px; margin-top: 10px; overflow: hidden; }
+  .prob-bar { height: 100%; border-radius: 99px; }
   .bull-bar { background: var(--green); } .neutral-bar { background: var(--yellow); } .bear-bar { background: var(--red); }
   .rsi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
-  .rsi-item { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
-  .rsi-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
-  .rsi-bar-wrap { height: 8px; background: linear-gradient(to right,var(--blue) 0%,var(--green) 50%,var(--red) 100%); border-radius: 4px; position: relative; }
-  .rsi-marker { width: 14px; height: 14px; background: white; border-radius: 50%; position: absolute; top: -3px; transform: translateX(-50%); border: 2px solid var(--card2); }
-  .rsi-value { font-size: 22px; font-weight: 700; margin-top: 8px; }
-  .rsi-desc { font-size: 12px; color: var(--muted); }
+  .rsi-item { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .rsi-label { font-size: 10.5px; color: var(--muted); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .rsi-bar-wrap { height: 7px; background: linear-gradient(to right, var(--blue) 0%, var(--green) 50%, var(--red) 100%); border-radius: 99px; position: relative; }
+  .rsi-marker { width: 13px; height: 13px; background: white; border-radius: 50%; position: absolute; top: -3px; transform: translateX(-50%); border: 2px solid var(--card2); box-shadow: 0 0 6px #0008; }
+  .rsi-value { font-size: 22px; font-weight: 800; margin-top: 8px; letter-spacing: -0.5px; }
+  .rsi-desc { font-size: 11px; color: var(--muted); }
   .ema-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
-  .ema-table th { background: #21262d; padding: 8px 12px; text-align: left; font-size: 11px; color: var(--muted); text-transform: uppercase; }
-  .ema-table td { padding: 8px 12px; border-bottom: 1px solid #21262d; }
-  .above { color: var(--red); } .below { color: var(--green); }
-  .strategy-box { background: #1f6feb11; border: 1px solid #1f6feb33; border-radius: 8px; padding: 16px; margin-top: 16px; }
-  .strategy-box h4 { font-size: 13px; font-weight: 600; color: var(--blue); margin-bottom: 8px; }
-  .strategy-box p { font-size: 13px; color: var(--muted); line-height: 1.7; }
-  .disclaimer { background: #9e6a0311; border: 1px solid #9e6a0333; color: var(--yellow); padding: 10px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 20px; }
-  .updated-badge { background: #1f6feb22; border: 1px solid #1f6feb55; color: var(--blue); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-  @media (max-width: 768px) {
-    .main { padding: 16px; }
-    .charts-grid,.scenarios { grid-template-columns: 1fr; }
-    .header { padding: 16px; }
+  .ema-table th { background: var(--card3); padding: 8px 12px; text-align: left; font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .ema-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .above { color: var(--red2); } .below { color: var(--green2); }
+  .strategy-box { background: #1d4ed808; border: 1px solid #3b82f620; border-radius: 10px; padding: 16px; margin-top: 16px; }
+  .strategy-box h4 { font-size: 12px; font-weight: 700; color: var(--blue2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .strategy-box p { font-size: 13px; color: var(--muted2); line-height: 1.75; }
+  .disclaimer { background: #d9770608; border: 1px solid #f59e0b25; color: var(--yellow); padding: 10px 16px; border-radius: 10px; font-size: 12px; margin-bottom: 20px; font-weight: 500; }
+  .updated-badge { background: #1d4ed820; border: 1px solid #3b82f640; color: var(--blue2); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+
+  /* ── Expandable Growth Rows ────────────────────── */
+  .g-row { cursor: pointer; }
+  .g-row:hover { background: #0d1829; }
+  .g-row.open { background: #0d1829; }
+  .g-expand { display: none; }
+  .g-expand.open { display: table-row; }
+  .g-expand td { padding: 0; }
+  .expand-inner {
+    display: flex; gap: 16px;
+    padding: 18px 20px;
+    border-top: 1px solid var(--border);
+    background: #060c16;
+  }
+  .expand-news { flex: 2; font-size: 13px; color: var(--muted2); line-height: 1.8; }
+  .expand-news-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--blue2); margin-bottom: 8px;
+  }
+  .expand-advice {
+    flex: 1.2; background: #1d4ed808; border: 1px solid #3b82f620;
+    border-radius: 10px; padding: 14px; font-size: 13px;
+    color: var(--text); line-height: 1.7;
+  }
+  .expand-advice-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--blue2); margin-bottom: 8px;
+  }
+  .advice-hold-box {
+    background: #1d4ed808; border: 1px solid #3b82f620;
+    border-radius: 10px; padding: 14px; flex: 1;
+    font-size: 13px; line-height: 1.7;
+  }
+  .expand-icon {
+    color: var(--muted); font-size: 10px;
+    transition: transform 0.25s; user-select: none;
+  }
+  .expand-icon.open { transform: rotate(90deg); color: var(--blue2); }
+
+  /* ── Editable Inputs ───────────────────────────── */
+  .price-input {
+    background: transparent; border: none;
+    border-bottom: 1px solid #3b82f640;
+    color: inherit; font-family: 'Inter', inherit;
+    font-size: 13px; font-weight: 700;
+    width: 78px; outline: none; text-align: right;
+    -moz-appearance: textfield;
+    transition: border-color 0.2s;
+  }
+  .price-input::-webkit-inner-spin-button,
+  .price-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .price-input:focus {
+    border-bottom-color: var(--blue2);
+    background: #3b82f608; border-radius: 4px; padding: 2px 4px;
+  }
+  .price-input.positive { color: var(--green2); }
+  .price-input.negative { color: var(--red2); }
+  .shares-input {
+    background: transparent; border: none;
+    border-bottom: 1px solid var(--border2);
+    color: var(--text); font-family: 'Inter', inherit;
+    font-size: 12px; font-weight: 600;
+    width: 70px; outline: none; text-align: right;
+    -moz-appearance: textfield;
+    transition: border-color 0.2s;
+  }
+  .shares-input::-webkit-inner-spin-button,
+  .shares-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .shares-input:focus {
+    border-bottom-color: var(--blue2);
+    background: #3b82f608; border-radius: 4px; padding: 2px 4px;
+  }
+
+  /* ── Action Buttons ────────────────────────────── */
+  .action-cell { display: flex; gap: 5px; align-items: center; }
+  .btn-buy, .btn-sell {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 4px 10px; border-radius: 6px;
+    font-size: 11px; font-weight: 700; cursor: pointer;
+    transition: all 0.15s; font-family: 'Inter', inherit;
+    white-space: nowrap; letter-spacing: 0.3px; line-height: 1; border: 1px solid;
+  }
+  .btn-buy { background: #16a34a15; color: var(--green2); border-color: #22c55e25; }
+  .btn-buy:hover { background: #16a34a30; color: #fff; border-color: var(--green); box-shadow: 0 0 10px #22c55e20; }
+  .btn-sell { background: transparent; color: var(--red2); border-color: #ef444425; }
+  .btn-sell:hover { background: #ef444418; color: #fca5a5; border-color: #ef444460; box-shadow: 0 0 10px #ef444420; }
+
+  /* ── Modals ────────────────────────────────────── */
+  #sellModal, #addModal, #manualTradeModal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.18s;
+  }
+  #addModal.open, #sellModal.open, #manualTradeModal.open {
+    opacity: 1; pointer-events: all;
+  }
+  .modal-box {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 20px; padding: 28px; width: 400px;
+    position: relative;
+    box-shadow: 0 24px 64px #00000088, 0 0 0 1px #3b82f610;
+    animation: modalIn 0.18s ease;
+  }
+  @keyframes modalIn {
+    from { transform: translateY(12px) scale(0.97); opacity: 0; }
+    to   { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  .modal-input {
+    width: 100%; background: var(--card2);
+    border: 1px solid var(--border2);
+    border-radius: 10px; padding: 10px 13px;
+    color: var(--text); font-size: 14px; font-weight: 600;
+    outline: none; font-family: 'Inter', inherit;
+    transition: border-color 0.2s;
+  }
+  .modal-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px #3b82f615; }
+  .modal-btn-confirm {
+    flex: 1; background: var(--blue); color: #fff;
+    border: none; border-radius: 10px; padding: 12px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    font-family: 'Inter', inherit;
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .modal-btn-confirm:hover { background: var(--blue2); box-shadow: 0 0 16px #3b82f640; }
+  .modal-btn-cancel {
+    flex: 1; background: var(--card2); color: var(--muted2);
+    border: 1px solid var(--border); border-radius: 10px; padding: 12px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: 'Inter', inherit; transition: background 0.15s;
+  }
+  .modal-btn-cancel:hover { background: var(--card3); color: var(--text); }
+
+  /* ── P&L Tab ───────────────────────────────────── */
+  .pl-positive { color: var(--green2); font-weight: 700; }
+  .pl-negative { color: var(--red2);   font-weight: 700; }
+  .pl-card { background: var(--card2); border-radius: 10px; padding: 14px 18px; }
+  .pl-table th {
+    background: var(--card2); padding: 10px 14px; text-align: left;
+    font-size: 10.5px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.7px; border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  .pl-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  .pl-table tr:last-child td { border-bottom: none; }
+  .pl-table tbody tr:hover { background: #0f1929; }
+  .pl-empty { text-align: center; padding: 48px; color: var(--muted); font-size: 14px; line-height: 2; }
+
+  /* ── Responsive ────────────────────────────────── */
+  @media (max-width: 900px) {
+    .main { padding: 16px 20px; }
+    .header, .tabs { padding-left: 20px; padding-right: 20px; }
+    .charts-grid, .scenarios { grid-template-columns: 1fr; }
+    .expand-inner { flex-direction: column; }
+    .modal-box { width: calc(100vw - 32px); }
+  }
+  @media (max-width: 600px) {
+    .summary-grid { grid-template-columns: 1fr 1fr; }
+    .card-value { font-size: 20px; }
   }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-icon">📊</div>
-  <div>
-    <h1>Stock Portfolio Dashboard</h1>
-    <p>Portfolio · AI Trading · P&L · Updated 3 Apr 2026</p>
+  <div class="header-logo">
+    <div class="header-icon">📊</div>
+    <h1>Portfolio</h1>
   </div>
-  <div class="badge">🤖 AI Updated</div>
+  <div class="header-divider"></div>
+  <p>Personal Investment Dashboard</p>
+  <span id="live-clock"></span>
+  <div class="badge">Live</div>
 </div>
 
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('portfolio')">📈 Portfolio</div>
-  <div class="tab " onclick="switchTab('ai')">🤖 AI Trading</div>
+  <div class="tab active" onclick="switchTab('growth')">🌱 Growth</div>
+  <div class="tab" onclick="switchTab('core')">🏦 Core</div>
+  <div class="tab" onclick="switchTab('ai')">🤖 AI Trading</div>
+  <div class="tab" onclick="switchTab('profit')">💰 Profit / Loss</div>
 </div>
 
-<!-- SHEET 1: PORTFOLIO -->
-<div id="tab-portfolio" class="section active main">
-  <div class="summary-grid">
-    <div class="card">
-      <div class="card-label">💰 Total Portfolio Value (THB)</div>
-      <div class="card-value blue-text">฿174,099</div>
-      <div class="card-sub">≈ $5,319.25 USD</div>
-    </div>
-    <div class="card">
-      <div class="card-label">📉 Total P&L (USD)</div>
-      <div class="card-value negative">$672.60</div>
-      <div class="card-sub negative">-11.2% overall</div>
-    </div>
-    <div class="card">
-      <div class="card-label">💱 Exchange Rate</div>
-      <div class="card-value blue-text">32.73</div>
-      <div class="card-sub">USD / THB</div>
-    </div>
-    <div class="card">
-      <div class="card-label">🏢 Holdings</div>
-      <div class="card-value blue-text">20</div>
-      <div class="card-sub">stocks in portfolio</div>
-    </div>
-    <div class="card">
-      <div class="card-label">✅ Gainers</div>
-      <div class="card-value positive">4</div>
-      <div class="card-sub positive">AMD, PLTR, RKLB, EOSE</div>
-    </div>
-    <div class="card">
-      <div class="card-label">❌ Losers</div>
-      <div class="card-value negative">15</div>
-      <div class="card-sub negative">stocks in portfolio</div>
-    </div>
-  </div>
-
-  <div class="charts-grid">
-    <div class="chart-card">
-      <h3>📊 Portfolio Allocation (% by Value)</h3>
-      <div class="chart-container"><canvas id="donutChart"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <h3>📉 P&L per Stock (USD)</h3>
-      <div class="chart-container"><canvas id="plChart"></canvas></div>
-    </div>
-  </div>
-
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="filterStocks('all',this)">🔘 All</button>
-    <button class="filter-btn" onclick="filterStocks('profit',this)">✅ Gainers</button>
-    <button class="filter-btn" onclick="filterStocks('loss',this)">❌ Losers</button>
-    <button class="filter-btn" onclick="filterStocks('advice-hold',this)">🔵 Hold</button>
-    <button class="filter-btn" onclick="filterStocks('advice-reduce',this)">⚠️ Reduce/Cut</button>
-  </div>
-
-  <div class="section-title"><div class="dot"></div> Individual Stock Details</div>
-  <div class="table-wrap">
-    <table id="stockTable">
-      <thead><tr>
-        <th>#</th><th>Stock</th><th>Cost/Share ($)</th><th>Current Price ($)</th>
-        <th>P&L ($)</th><th>% Change</th><th>Value (USD)</th>
-        <th>Value (THB)</th><th>Weight %</th><th>Advice</th><th>Updated</th>
-      </tr></thead>
-      <tbody id="stockBody">
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">1</td>
-        <td><span class="ticker">NVDA</span></td>
-        <td>$176.6515</td>
-        <td>$167.9100</td>
-        <td class="negative">$58.63</td>
-        <td class="negative">-4.95%</td>
-        <td>$1126.27</td>
-        <td>฿36,863</td>
-        <td>21.2%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">2</td>
-        <td><span class="ticker">MSFT</span></td>
-        <td>$454.4208</td>
-        <td>$362.9200</td>
-        <td class="negative">$207.25</td>
-        <td class="negative">-20.14%</td>
-        <td>$822.01</td>
-        <td>฿26,904</td>
-        <td>15.5%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">3</td>
-        <td><span class="ticker">RXRX</span></td>
-        <td>$4.1875</td>
-        <td>$3.1200</td>
-        <td class="negative">$75.23</td>
-        <td class="negative">-25.49%</td>
-        <td>$219.87</td>
-        <td>฿7,196</td>
-        <td>4.1%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">4</td>
-        <td><span class="ticker">ORCL</span></td>
-        <td>$176.4656</td>
-        <td>$138.5000</td>
-        <td class="negative">$174.17</td>
-        <td class="negative">-21.51%</td>
-        <td>$635.39</td>
-        <td>฿20,796</td>
-        <td>11.9%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">5</td>
-        <td><span class="ticker">AMZN</span></td>
-        <td>$213.9143</td>
-        <td>$201.6200</td>
-        <td class="negative">$29.00</td>
-        <td class="negative">-5.75%</td>
-        <td>$475.66</td>
-        <td>฿15,568</td>
-        <td>8.9%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">6</td>
-        <td><span class="ticker">AVGO</span></td>
-        <td>$334.6077</td>
-        <td>$293.5600</td>
-        <td class="negative">$53.12</td>
-        <td class="negative">-12.27%</td>
-        <td>$379.92</td>
-        <td>฿12,435</td>
-        <td>7.1%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">7</td>
-        <td><span class="ticker">PLTR</span></td>
-        <td>$145.7341</td>
-        <td>$148.6200</td>
-        <td class="positive">+$1.87</td>
-        <td class="positive">+1.98%</td>
-        <td>$96.43</td>
-        <td>฿3,156</td>
-        <td>1.8%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">8</td>
-        <td><span class="ticker">GOOGL</span></td>
-        <td>$316.3618</td>
-        <td>$292.0000</td>
-        <td class="negative">$25.41</td>
-        <td class="negative">-7.70%</td>
-        <td>$304.53</td>
-        <td>฿9,967</td>
-        <td>5.7%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">9</td>
-        <td><span class="ticker">GOOG</span></td>
-        <td>$300.5908</td>
-        <td>$292.5000</td>
-        <td class="negative">$7.31</td>
-        <td class="negative">-2.69%</td>
-        <td>$264.17</td>
-        <td>฿8,646</td>
-        <td>5.0%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">10</td>
-        <td><span class="ticker">TSLA</span></td>
-        <td>$421.9834</td>
-        <td>$363.7700</td>
-        <td class="negative">$33.09</td>
-        <td class="negative">-13.80%</td>
-        <td>$206.80</td>
-        <td>฿6,769</td>
-        <td>3.9%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">11</td>
-        <td><span class="ticker">AMD</span></td>
-        <td>$200.0682</td>
-        <td>$216.3500</td>
-        <td class="positive">+$16.17</td>
-        <td class="positive">+8.14%</td>
-        <td>$214.85</td>
-        <td>฿7,032</td>
-        <td>4.0%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">12</td>
-        <td><span class="ticker">META</span></td>
-        <td>$631.0157</td>
-        <td>$573.8300</td>
-        <td class="negative">$15.20</td>
-        <td class="negative">-9.06%</td>
-        <td>$152.51</td>
-        <td>฿4,992</td>
-        <td>2.9%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">13</td>
-        <td><span class="ticker">AAPL</span></td>
-        <td>$261.1080</td>
-        <td>$254.9900</td>
-        <td class="negative">$2.28</td>
-        <td class="negative">-2.34%</td>
-        <td>$94.82</td>
-        <td>฿3,103</td>
-        <td>1.8%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">14</td>
-        <td><span class="ticker">ASML</span></td>
-        <td>$1336.5637</td>
-        <td>$1232.6000</td>
-        <td class="negative">$7.33</td>
-        <td class="negative">-7.78%</td>
-        <td>$86.94</td>
-        <td>฿2,846</td>
-        <td>1.6%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">15</td>
-        <td><span class="ticker">LLY</span></td>
-        <td>$943.0277</td>
-        <td>$926.5600</td>
-        <td class="negative">$1.54</td>
-        <td class="negative">-1.75%</td>
-        <td>$86.58</td>
-        <td>฿2,834</td>
-        <td>1.6%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">16</td>
-        <td><span class="ticker">TSM</span></td>
-        <td>$340.9569</td>
-        <td>$339.8000</td>
-        <td class="negative">$0.23</td>
-        <td class="negative">-0.34%</td>
-        <td>$67.59</td>
-        <td>฿2,212</td>
-        <td>1.3%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">17</td>
-        <td><span class="ticker">RKLB</span></td>
-        <td>$65.6900</td>
-        <td>$66.5500</td>
-        <td class="positive">+$0.40</td>
-        <td class="positive">+1.31%</td>
-        <td>$31.34</td>
-        <td>฿1,026</td>
-        <td>0.6%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">18</td>
-        <td><span class="ticker">EOSE</span></td>
-        <td>$11.0328</td>
-        <td>$11.1000</td>
-        <td class="positive">+$0.16</td>
-        <td class="positive">+0.61%</td>
-        <td>$27.07</td>
-        <td>฿886</td>
-        <td>0.5%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-increase">
-        <td style="color:var(--muted)">19</td>
-        <td><span class="ticker">HOOD</span></td>
-        <td>$73.9040</td>
-        <td>$70.1700</td>
-        <td class="negative">$1.41</td>
-        <td class="negative">-5.05%</td>
-        <td>$26.50</td>
-        <td>฿867</td>
-        <td>0.5%</td>
-        <td><span class="advice-badge advice-increase">✅ Hold/Add</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr>
-      <tr data-advice="advice-hold">
-        <td style="color:var(--muted)">20</td>
-        <td><span class="ticker">GOLD</span></td>
-        <td>$4658.6300</td>
-        <td>$42.2000</td>
-        <td class="positive">+$0.00</td>
-        <td class="positive">+0.00%</td>
-        <td>$0.00</td>
-        <td>฿0</td>
-        <td>0.0%</td>
-        <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
-        <td style="color:var(--muted);font-size:12px">🆕 3 Apr</td>
-      </tr></tbody>
-    </table>
-  </div>
-
-  <div class="section-title"><div class="dot"></div> Portfolio Positions — Value per Stock (THB)</div>
-  <div class="chart-card" style="margin-bottom:32px;">
-    <div class="chart-container" style="height:320px;"><canvas id="positionChart"></canvas></div>
-  </div>
-</div>
 
 <!-- SHEET 2: AI TRADING -->
 <div id="tab-ai" class="section  main">
@@ -676,84 +741,1459 @@
   </div>
 </div>
 
+<!-- SHEET 3: CORE PORTFOLIO -->
+<div id="tab-core" class="section main">
+  <div class="summary-grid">
+    <div class="card">
+      <div class="card-label">💰 Core Portfolio Value</div>
+      <div class="card-value blue-text">฿230,015</div>
+      <div class="card-sub">/ ฿500,000 goal &nbsp;·&nbsp; 46%</div>
+    </div>
+    <div class="card">
+      <div class="card-label">📅 Daily Change</div>
+      <div class="card-value positive">+0.34%</div>
+      <div class="card-sub positive">vs yesterday</div>
+    </div>
+    <div class="card">
+      <div class="card-label">💹 P&L (Holdings)</div>
+      <div class="card-value positive">+3.94%</div>
+      <div class="card-sub positive">+฿8,001.57 THB</div>
+    </div>
+    <div class="card">
+      <div class="card-label">💱 Exchange Rate</div>
+      <div class="card-value blue-text">31.99</div>
+      <div class="card-sub">USD / THB</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🏢 Holdings</div>
+      <div class="card-value blue-text">9</div>
+      <div class="card-sub">assets in Core</div>
+    </div>
+    <div class="card">
+      <div class="card-label">📅 As of</div>
+      <div class="card-value" style="font-size:16px">9 Apr 2026</div>
+      <div class="card-sub">22:26 local time</div>
+    </div>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <span style="font-size:13px;color:var(--muted);font-weight:600;">GOAL PROGRESS — ฿500,000</span>
+      <span style="font-size:13px;color:var(--green);font-weight:700;">46%</span>
+    </div>
+    <div style="height:10px;background:#21262d;border-radius:5px;overflow:hidden;">
+      <div style="width:46%;height:100%;background:linear-gradient(90deg,#3fb950,#58a6ff);border-radius:5px;"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:var(--muted);">
+      <span>฿230,015</span><span>฿500,000</span>
+    </div>
+  </div>
+
+  <div class="section-title"><div class="dot"></div> Core Holdings — 9 Assets</div>
+  <div class="table-wrap" style="margin-bottom:32px;">
+    <table>
+      <thead><tr>
+        <th>#</th><th>Asset</th><th>Value (THB)</th><th>Value (USD)</th>
+        <th>Weight %</th><th>Shares</th><th>Cost/Share ($)</th><th>Price ($)</th><th>P&L %</th><th>P&L (THB)</th><th>Actions</th>
+      </tr></thead>
+      <tbody>
+      <!-- MTS-GOLD (THB-priced) -->
+      <tr>
+        <td style="color:var(--muted)">1</td>
+        <td><span class="ticker">MTS-GOLD</span><br><span style="font-size:11px;color:var(--muted)">Gold Savings (THB)</span></td>
+        <td id="c1-val-thb"><strong>฿56,861</strong></td>
+        <td id="c1-val-usd" style="color:var(--muted)">—</td>
+        <td>24.72%</td>
+        <td><input type="number" class="shares-input" id="c1-shares" value="11.8737" step="0.0001"
+             oninput="updateShares('c1',this)"></td>
+        <td style="color:var(--blue);font-size:12px" id="c1-cost-display">฿4,598.43</td>
+        <td><input type="number" class="price-input positive" id="c1-price" value="4788.83" step="0.01"
+             data-cost="4598.43" data-shares="11.8737" data-cur="THB"
+             oninput="recalc('c1',this)" ></td>
+        <td id="c1-pl-pct" class="positive">+4.14%</td>
+        <td id="c1-pl-thb" class="positive">+฿2,261</td><td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'c1','MTS-GOLD','THB')" >＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'c1','MTS-GOLD','THB')">－ Sell</button></div></td>
+      </tr>
+      <!-- VOO -->
+      <tr>
+        <td style="color:var(--muted)">2</td>
+        <td><span class="ticker">VOO</span><br><span style="font-size:11px;color:var(--muted)">Vanguard S&P 500 ETF</span></td>
+        <td id="c2-val-thb"><strong>฿56,746</strong></td>
+        <td id="c2-val-usd" style="color:var(--muted)">≈$1,774</td>
+        <td>24.67%</td>
+        <td><input type="number" class="shares-input" id="c2-shares" value="2.8374" step="0.0001"
+             oninput="updateShares('c2',this)"></td>
+        <td style="color:var(--blue);font-size:12px" id="c2-cost-display">$590.81</td>
+        <td><input type="number" class="price-input positive" id="c2-price" value="625.18" step="0.01"
+             data-cost="590.8121" data-shares="2.8374" data-cur="USD"
+             oninput="recalc('c2',this)" ></td>
+        <td id="c2-pl-pct" class="positive">+5.82%</td>
+        <td id="c2-pl-thb" class="positive">+฿3,119</td><td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'c2','VOO','USD')" >＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'c2','VOO','USD')">－ Sell</button></div></td>
+      </tr>
+      <!-- QQQM -->
+      <tr>
+        <td style="color:var(--muted)">3</td>
+        <td><span class="ticker">QQQM</span><br><span style="font-size:11px;color:var(--muted)">Invesco Nasdaq 100 ETF</span></td>
+        <td id="c3-val-thb"><strong>฿46,190</strong></td>
+        <td id="c3-val-usd" style="color:var(--muted)">≈$1,444</td>
+        <td>20.08%</td>
+        <td><input type="number" class="shares-input" id="c3-shares" value="5.7580" step="0.0001"
+             oninput="updateShares('c3',this)"></td>
+        <td style="color:var(--blue);font-size:12px" id="c3-cost-display">$240.20</td>
+        <td><input type="number" class="price-input positive" id="c3-price" value="250.76" step="0.01"
+             data-cost="240.2021" data-shares="5.7580" data-cur="USD"
+             oninput="recalc('c3',this)" ></td>
+        <td id="c3-pl-pct" class="positive">+4.40%</td>
+        <td id="c3-pl-thb" class="positive">+฿1,945</td><td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'c3','QQQM','USD')" >＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'c3','QQQM','USD')">－ Sell</button></div></td>
+      </tr>
+      <!-- Dime! USD (fixed) -->
+      <tr>
+        <td style="color:var(--muted)">4</td>
+        <td><span class="ticker">Dime! USD</span><br><span style="font-size:11px;color:var(--muted)">USD Savings Account</span></td>
+        <td><strong>฿38,010</strong></td>
+        <td style="color:var(--muted)">≈$1,189</td>
+        <td>14.15%</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+      
+        <td></td></tr>
+      <!-- SMH -->
+      <tr>
+        <td style="color:var(--muted)">5</td>
+        <td><span class="ticker">SMH</span><br><span style="font-size:11px;color:var(--muted)">VanEck Semiconductor ETF</span></td>
+        <td id="c5-val-thb"><strong>฿13,662</strong></td>
+        <td id="c5-val-usd" style="color:var(--muted)">≈$427</td>
+        <td>5.94%</td>
+        <td><input type="number" class="shares-input" id="c5-shares" value="0.9963" step="0.0001"
+             oninput="updateShares('c5',this)"></td>
+        <td style="color:var(--blue);font-size:12px" id="c5-cost-display">$398.23</td>
+        <td><input type="number" class="price-input positive" id="c5-price" value="428.67" step="0.01"
+             data-cost="398.2278" data-shares="0.9963" data-cur="USD"
+             oninput="recalc('c5',this)" ></td>
+        <td id="c5-pl-pct" class="positive">+7.64%</td>
+        <td id="c5-pl-thb" class="positive">+฿970</td><td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'c5','SMH','USD')" >＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'c5','SMH','USD')">－ Sell</button></div></td>
+      </tr>
+      <!-- VXUS -->
+      <tr>
+        <td style="color:var(--muted)">6</td>
+        <td><span class="ticker">VXUS</span><br><span style="font-size:11px;color:var(--muted)">Vanguard Total Intl Stock ETF</span></td>
+        <td id="c6-val-thb"><strong>฿12,169</strong></td>
+        <td id="c6-val-usd" style="color:var(--muted)">≈$380</td>
+        <td>5.29%</td>
+        <td><input type="number" class="shares-input" id="c6-shares" value="4.6800" step="0.0001"
+             oninput="updateShares('c6',this)"></td>
+        <td style="color:var(--blue);font-size:12px" id="c6-cost-display">$78.06</td>
+        <td><input type="number" class="price-input positive" id="c6-price" value="81.28" step="0.01"
+             data-cost="78.0647" data-shares="4.6800" data-cur="USD"
+             oninput="recalc('c6',this)" ></td>
+        <td id="c6-pl-pct" class="positive">+4.12%</td>
+        <td id="c6-pl-thb" class="positive">+฿481</td><td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'c6','VXUS','USD')" >＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'c6','VXUS','USD')">－ Sell</button></div></td>
+      </tr>
+      <!-- Dime! Save (fixed) -->
+      <tr>
+        <td style="color:var(--muted)">7</td>
+        <td><span class="ticker">Dime! Save</span><br><span style="font-size:11px;color:var(--muted)">THB Savings Account</span></td>
+        <td><strong>฿11,101</strong></td>
+        <td style="color:var(--muted)">—</td>
+        <td>4.83%</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+      
+        <td></td></tr>
+      <!-- SCHD (NEW) -->
+      <tr>
+        <td style="color:var(--muted)">8</td>
+        <td><span class="ticker">SCHD</span><br><span style="font-size:11px;color:var(--muted)">Schwab US Dividend ETF</span></td>
+        <td id="c8-val-thb" style="color:var(--muted)">—</td>
+        <td id="c8-val-usd" style="color:var(--muted)">—</td>
+        <td>—</td>
+        <td><input type="number" class="shares-input" id="c8-shares" value="0" step="0.0001"
+             oninput="updateShares('c8',this)"></td>
+        <td style="color:var(--blue);font-size:12px" id="c8-cost-display">$29.59</td>
+        <td><input type="number" class="price-input positive" id="c8-price" value="30.87" step="0.01"
+             data-cost="29.5948" data-shares="0" data-cur="USD"
+             oninput="recalc('c8',this)" ></td>
+        <td id="c8-pl-pct" class="positive">+4.31%</td>
+        <td id="c8-pl-thb" class="positive">—</td><td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'c8','SCHD','USD')" >＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'c8','SCHD','USD')">－ Sell</button></div></td>
+      </tr>
+      <!-- Dime! FCD (fixed) -->
+      <tr>
+        <td style="color:var(--muted)">9</td>
+        <td><span class="ticker">Dime! FCD</span><br><span style="font-size:11px;color:var(--muted)">Fixed Deposit (THB)</span></td>
+        <td><strong>฿733</strong></td>
+        <td style="color:var(--muted)">≈$23</td>
+        <td>0.32%</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">—</td>
+      
+        <td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>📊 Core Allocation (% by Value)</h3>
+      <div class="chart-container"><canvas id="coreDonutChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>📉 Core P&L (THB)</h3>
+      <div class="chart-container"><canvas id="corePlChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHEET 4: GROWTH PORTFOLIO -->
+<div id="tab-growth" class="section active main">
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    <div class="card">
+      <div class="card-label">💰 Growth Portfolio Value</div>
+      <div class="card-value blue-text">฿173,685</div>
+      <div class="card-sub">/ ฿500,000 goal &nbsp;·&nbsp; 35%</div>
+    </div>
+    <div class="card">
+      <div class="card-label">📅 Daily Change</div>
+      <div class="card-value negative">-0.27%</div>
+      <div class="card-sub negative">vs yesterday</div>
+    </div>
+    <div class="card">
+      <div class="card-label">💹 P&amp;L (Holdings)</div>
+      <div class="card-value negative">-4.09%</div>
+      <div class="card-sub negative">-฿8,190.01 THB</div>
+    </div>
+    <div class="card">
+      <div class="card-label">✅ Gainers / ❌ Losers</div>
+      <div class="card-value"><span class="positive">8</span> / <span class="negative">4</span></div>
+      <div class="card-sub">out of 11 stocks</div>
+    </div>
+    <div class="card">
+      <div class="card-label">💱 Exchange Rate</div>
+      <div class="card-value blue-text">31.99</div>
+      <div class="card-sub">USD / THB · 9 Apr 2026</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🤖 AI Updated</div>
+      <div class="card-value" style="font-size:16px">9 Apr 2026</div>
+      <div class="card-sub">News &amp; Advice Refreshed</div>
+    </div>
+  </div>
+
+  <!-- Goal Progress -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <span style="font-size:13px;color:var(--muted);font-weight:600;">GOAL PROGRESS — ฿500,000</span>
+      <span style="font-size:13px;color:var(--green);font-weight:700;">35%</span>
+    </div>
+    <div style="height:10px;background:#21262d;border-radius:5px;overflow:hidden;">
+      <div style="width:35%;height:100%;background:linear-gradient(90deg,#3fb950,#58a6ff);border-radius:5px;"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:var(--muted);">
+      <span>฿173,685</span><span>฿500,000</span>
+    </div>
+  </div>
+
+  <!-- Hint -->
+  <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">👆 Click any row to expand news &amp; AI advice detail</p>
+
+  <!-- Compact Table -->
+  <div class="table-wrap" style="margin-bottom:32px;">
+    <table id="growthTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Stock</th>
+          <th>Value (THB)</th>
+          <th>Value (USD)</th>
+          <th>Weight</th>
+          <th>Shares</th>
+          <th>Cost/Share ($)</th>
+          <th>Price ($)</th>
+          <th>P&amp;L %</th>
+          <th>P&amp;L (THB)</th>
+          <th>AI Advice</th>
+          <th style="width:36px;"></th>
+          <th style="width:28px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- NVDA -->
+        <tr class="g-row" onclick="toggleGrow('g1')" style="cursor:pointer;">
+          <td style="color:var(--muted)">1</td>
+          <td><span class="ticker">NVDA</span><br><span style="font-size:11px;color:var(--muted)">NVIDIA Corporation</span></td>
+          <td id="g1-val-thb"><strong>฿44,755</strong></td>
+          <td id="g1-val-usd" style="color:var(--muted)">≈$1,400</td>
+          <td>28.40%</td>
+          <td><input type="number" class="shares-input" id="g1-shares" value="7.4238" step="0.0001"
+               oninput="updateShares('g1',this)" ></td>
+          <td style="color:var(--blue);font-size:12px" id="g1-cost-display">$175.14</td>
+          <td><input type="number" class="price-input positive" id="g1-price" value="188.63" step="0.01"
+               data-cost="175.1385" data-shares="7.4238" data-cur="USD"
+               oninput="recalc('g1',this)" ></td>
+          <td id="g1-pl-pct" class="positive">+7.70%</td>
+          <td id="g1-pl-thb" class="positive">+฿3,201</td>
+          <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
+          <td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'g1','NVDA','USD')">＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'g1','NVDA','USD')">－ Sell</button></div></td>
+          <td class="expand-icon" id="ico-g1">▶</td>
+        </tr>
+        <tr class="g-expand" id="g1">
+          <td colspan="12">
+            <div class="expand-inner">
+              <div class="expand-news">
+                <div class="expand-news-label">📰 Latest News</div>
+                CoreWeave signs $21B deal with Meta, deploying Nvidia's next-gen GPUs through 2032. AI data center demand remains intact despite OpenAI pausing Stargate UK project. Strong institutional demand for Blackwell architecture — long-term thesis unchanged.
+              </div>
+              <div class="expand-advice advice-hold-box">
+                <div class="expand-advice-label">🤖 AI Advice</div>
+                <strong>Hold</strong> — Largest position at 28.40% of Growth. AI GPU demand is structurally strong. Current +4.24% gain shows resilience. No action needed; add on significant pullbacks only.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- MSFT -->
+        <tr class="g-row" onclick="toggleGrow('g2')" style="cursor:pointer;">
+          <td style="color:var(--muted)">2</td>
+          <td><span class="ticker">MSFT</span><br><span style="font-size:11px;color:var(--muted)">Microsoft Corporation</span></td>
+          <td id="g2-val-thb"><strong>฿32,321</strong></td>
+          <td id="g2-val-usd" style="color:var(--muted)">≈$1,010</td>
+          <td>18.61%</td>
+          <td><input type="number" class="shares-input" id="g2-shares" value="2.7197" step="0.0001"
+               oninput="updateShares('g2',this)" ></td>
+          <td style="color:var(--blue);font-size:12px" id="g2-cost-display">$439.19</td>
+          <td><input type="number" class="price-input negative" id="g2-price" value="371.49" step="0.01"
+               data-cost="439.1907" data-shares="2.7197" data-cur="USD"
+               oninput="recalc('g2',this)" ></td>
+          <td id="g2-pl-pct" class="negative">-15.41%</td>
+          <td id="g2-pl-thb" class="negative">-฿5,890</td>
+          <td><span class="advice-badge advice-reduce" style="background:#d2992222;color:var(--yellow);border-color:#d2992244;">🟡 Watch</span></td>
+          <td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'g2','MSFT','USD')">＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'g2','MSFT','USD')">－ Sell</button></div></td>
+          <td class="expand-icon" id="ico-g2">▶</td>
+        </tr>
+        <tr class="g-expand" id="g2">
+          <td colspan="12">
+            <div class="expand-inner">
+              <div class="expand-news">
+                <div class="expand-news-label">📰 Latest News</div>
+                OpenAI (backed by MSFT) pauses Stargate UK data center citing restrictive regulations and soaring energy costs — a significant setback. Azure cloud and Copilot AI long-term thesis remains intact, but near-term headwind is notable with the stock already down -15.41%.
+              </div>
+              <div class="expand-advice" style="background:#d2992211;border:1px solid #d2992233;border-radius:8px;padding:14px;flex:1;">
+                <div class="expand-advice-label" style="color:var(--yellow);">🟡 Watch</div>
+                <strong>Monitor closely</strong> — -15.41% P&L is a significant loss. Azure AI fundamentals still strong but the Stargate UK pause adds uncertainty. Watch next earnings call before adding. Do not cut unless the Azure growth story deteriorates.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- ORCL -->
+        <tr class="g-row" onclick="toggleGrow('g3')" style="cursor:pointer;">
+          <td style="color:var(--muted)">3</td>
+          <td><span class="ticker">ORCL</span><br><span style="font-size:11px;color:var(--muted)">Oracle Corporation</span></td>
+          <td id="g3-val-thb"><strong>฿23,973</strong></td>
+          <td id="g3-val-usd" style="color:var(--muted)">≈$749</td>
+          <td>13.80%</td>
+          <td><input type="number" class="shares-input" id="g3-shares" value="5.3735" step="0.0001"
+               oninput="updateShares('g3',this)" ></td>
+          <td style="color:var(--blue);font-size:12px" id="g3-cost-display">$169.05</td>
+          <td><input type="number" class="price-input negative" id="g3-price" value="139.46" step="0.01"
+               data-cost="169.0490" data-shares="5.3735" data-cur="USD"
+               oninput="recalc('g3',this)" ></td>
+          <td id="g3-pl-pct" class="negative">-17.50%</td>
+          <td id="g3-pl-thb" class="negative">-฿5,086</td>
+          <td><span class="advice-badge advice-cutloss">🔴 Reduce</span></td>
+          <td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'g3','ORCL','USD')">＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'g3','ORCL','USD')">－ Sell</button></div></td>
+          <td class="expand-icon" id="ico-g3">▶</td>
+        </tr>
+        <tr class="g-expand" id="g3">
+          <td colspan="12">
+            <div class="expand-inner">
+              <div class="expand-news">
+                <div class="expand-news-label">📰 Latest News</div>
+                Hit hard by OpenAI pausing Stargate UK — Oracle was a key cloud infrastructure partner for the project. Down -17.50% with continued downside risk as the AI data center pipeline faces delays. High weight (13.80%) amplifies portfolio impact.
+              </div>
+              <div class="expand-advice" style="background:#f8514911;border:1px solid #f8514933;border-radius:8px;padding:14px;flex:1;">
+                <div class="expand-advice-label" style="color:var(--red);">🔴 Reduce</div>
+                <strong>Consider trimming</strong> — Largest loser at -17.50% (-฿5,086). The catalyst that drove ORCL's AI premium (Stargate UK) is now paused. Reducing position size limits further downside exposure. Hold a partial position in case the project resumes.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- AMZN -->
+        <tr class="g-row" onclick="toggleGrow('g4')" style="cursor:pointer;">
+          <td style="color:var(--muted)">4</td>
+          <td><span class="ticker">AMZN</span><br><span style="font-size:11px;color:var(--muted)">Amazon.com, Inc.</span></td>
+          <td id="g4-val-thb"><strong>฿10,007</strong></td>
+          <td id="g4-val-usd" style="color:var(--muted)">≈$313</td>
+          <td>5.76%</td>
+          <td><input type="number" class="shares-input" id="g4-shares" value="1.3491" step="0.0001"
+               oninput="updateShares('g4',this)" ></td>
+          <td style="color:var(--blue);font-size:12px" id="g4-cost-display">$213.91</td>
+          <td><input type="number" class="price-input positive" id="g4-price" value="231.87" step="0.01"
+               data-cost="213.9143" data-shares="1.3491" data-cur="USD"
+               oninput="recalc('g4',this)" ></td>
+          <td id="g4-pl-pct" class="positive">+8.39%</td>
+          <td id="g4-pl-thb" class="positive">+฿775</td>
+          <td><span class="advice-badge advice-increase">🟢 Hold / Add</span></td>
+          <td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'g4','AMZN','USD')">＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'g4','AMZN','USD')">－ Sell</button></div></td>
+          <td class="expand-icon" id="ico-g4">▶</td>
+        </tr>
+        <tr class="g-expand" id="g4">
+          <td colspan="12">
+            <div class="expand-inner">
+              <div class="expand-news">
+                <div class="expand-news-label">📰 Latest News</div>
+                CEO Andy Jassy's annual letter defended Amazon's massive AI/cloud capex bets, signaling confidence in long-term AWS growth. Stock up +8.39% as market responded positively. Intel scored a multi-gen AI deal with Google — bullish signal for the broader cloud infrastructure sector including AWS.
+              </div>
+              <div class="expand-advice advice-increase-box" style="background:#1a7f3722;border:1px solid #1a7f3744;border-radius:8px;padding:14px;flex:1;">
+                <div class="expand-advice-label" style="color:var(--green);">🟢 Hold / Add</div>
+                <strong>Strong performer — consider adding</strong> — +8.39% gain with strong AWS AI momentum. CEO's conviction on capex strategy is a positive signal. Good candidate for increasing position on any short-term dips.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- GOOG -->
+        <tr class="g-row" onclick="toggleGrow('g5')" style="cursor:pointer;">
+          <td style="color:var(--muted)">5</td>
+          <td><span class="ticker">GOOG</span><br><span style="font-size:11px;color:var(--muted)">Alphabet Inc. (Class C)</span></td>
+          <td id="g5-val-thb"><strong>฿16,626</strong></td>
+          <td id="g5-val-usd" style="color:var(--muted)">≈$520</td>
+          <td>9.57%</td>
+          <td><input type="number" class="shares-input" id="g5-shares" value="1.6420" step="0.0001"
+               oninput="updateShares('g5',this)" ></td>
+          <td style="color:var(--blue);font-size:12px" id="g5-cost-display">$297.13</td>
+          <td><input type="number" class="price-input positive" id="g5-price" value="316.51" step="0.01"
+               data-cost="297.1272" data-shares="1.6420" data-cur="USD"
+               oninput="recalc('g5',this)" ></td>
+          <td id="g5-pl-pct" class="positive">+6.52%</td>
+          <td id="g5-pl-thb" class="positive">+฿1,018</td>
+          <td><span class="advice-badge advice-increase">🟢 Hold / Add</span></td>
+          <td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'g5','GOOG','USD')">＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'g5','GOOG','USD')">－ Sell</button></div></td>
+          <td class="expand-icon" id="ico-g5">▶</td>
+        </tr>
+        <tr class="g-expand" id="g5">
+          <td colspan="12">
+            <div class="expand-inner">
+              <div class="expand-news">
+                <div class="expand-news-label">📰 Latest News</div>
+                Intel scores multi-gen Google AI chip deal, signaling deep Alphabet AI infrastructure commitment. Alphabet led the tech rally after Trump announced Iran ceasefire. Long-term Broadcom chip partnership also in place. Search + Cloud + AI platform = well-diversified revenue.
+              </div>
+              <div class="expand-advice advice-increase-box" style="background:#1a7f3722;border:1px solid #1a7f3744;border-radius:8px;padding:14px;flex:1;">
+                <div class="expand-advice-label" style="color:var(--green);">🟢 Hold / Add</div>
+                <strong>Strong momentum</strong> — +6.52% with positive AI catalysts. Search + Cloud + AI drives diversified revenue. Consider accumulating on dips for long-term exposure to Alphabet's AI dominance.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- TSLA -->
+        <tr class="g-row" onclick="toggleGrow('g6')" style="cursor:pointer;">
+          <td style="color:var(--muted)">6</td>
+          <td><span class="ticker">TSLA</span><br><span style="font-size:11px;color:var(--muted)">Tesla, Inc.</span></td>
+          <td id="g6-val-thb"><strong>฿13,432</strong></td>
+          <td id="g6-val-usd" style="color:var(--muted)">≈$420</td>
+          <td>7.73%</td>
+          <td><input type="number" class="shares-input" id="g6-shares" value="1.2060" step="0.0001"
+               oninput="updateShares('g6',this)" ></td>
+          <td style="color:var(--blue);font-size:12px" id="g6-cost-display">$389.77</td>
+          <td><input type="number" class="price-input negative" id="g6-price" value="348.17" step="0.01"
+               data-cost="389.7744" data-shares="1.2060" data-cur="USD"
+               oninput="recalc('g6',this)" ></td>
+          <td id="g6-pl-pct" class="negative">-10.67%</td>
+          <td id="g6-pl-thb" class="negative">-฿1,605</td>
+          <td><span class="advice-badge advice-reduce" style="background:#d2992222;color:var(--yellow);border-color:#d2992244;">🟡 Watch</span></td>
+          <td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'g6','TSLA','USD')">＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'g6','TSLA','USD')">－ Sell</button></div></td>
+          <td class="expand-icon" id="ico-g6">▶</td>
+        </tr>
+        <tr class="g-expand" id="g6">
+          <td colspan="12">
+            <div class="expand-inner">
+              <div class="expand-news">
+                <div class="expand-news-label">📰 Latest News</div>
+                Q1 2026 deliveries came in at 358,023 vehicles — down 14% sequentially and below analyst expectations. JPMorgan downgraded the stock, warning of a potential 60% further decline. However, Cybercab manufacturing begins April at Giga Texas using Unboxed process — a major long-term robotaxi catalyst.
+              </div>
+              <div class="expand-advice" style="background:#d2992211;border:1px solid #d2992233;border-radius:8px;padding:14px;flex:1;">
+                <div class="expand-advice-label" style="color:var(--yellow);">🟡 Watch</div>
+                <strong>High risk, long-term upside</strong> — -10.67% P&L with near-term fundamental weakness (delivery miss + analyst downgrades). Cybercab is a long-term story. Hold current position but do not add until Q2 delivery data confirms a recovery trend.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- META -->
+        <tr class="g-row" onclick="toggleGrow('g8')" style="cursor:pointer;">
+          <td style="color:var(--muted)">7</td>
+          <td><span class="ticker">META</span><br><span style="font-size:11px;color:var(--muted)">Meta Platforms, Inc.</span></td>
+          <td id="g8-val-thb"><strong>฿10,449</strong></td>
+          <td id="g8-val-usd" style="color:var(--muted)">≈$327</td>
+          <td>6.02%</td>
+          <td><input type="number" class="shares-input" id="g8-shares" value="0.5146" step="0.0001"
+               oninput="updateShares('g8',this)" ></td>
+          <td style="color:var(--blue);font-size:12px" id="g8-cost-display">$616.79</td>
+          <td><input type="number" class="price-input positive" id="g8-price" value="634.76" step="0.01"
+               data-cost="616.7928" data-shares="0.5146" data-cur="USD"
+               oninput="recalc('g8',this)" ></td>
+          <td id="g8-pl-pct" class="positive">+2.91%</td>
+          <td id="g8-pl-thb" class="positive">+฿296</td>
+          <td><span class="advice-badge advice-increase">🟢 Hold / Add</span></td>
+          <td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'g8','META','USD')">＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'g8','META','USD')">－ Sell</button></div></td>
+          <td class="expand-icon" id="ico-g8">▶</td>
+        </tr>
+        <tr class="g-expand" id="g8">
+          <td colspan="12">
+            <div class="expand-inner">
+              <div class="expand-news">
+                <div class="expand-news-label">📰 Latest News</div>
+                Meta launched new AI model "Muse Spark" and signed a massive $21B CoreWeave deal for dedicated AI cloud capacity through 2032 — some of the first deployments of Nvidia's next-gen hardware. Shares surged on the Iran ceasefire tech rally. Strong AI monetization runway ahead.
+              </div>
+              <div class="expand-advice advice-increase-box" style="background:#1a7f3722;border:1px solid #1a7f3744;border-radius:8px;padding:14px;flex:1;">
+                <div class="expand-advice-label" style="color:var(--green);">🟢 Hold / Add</div>
+                <strong>Positive catalysts stacking up</strong> — New AI model + massive compute deal. +2.91% with room to grow. Good candidate for adding on dips below recent lows.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- TSM -->
+        <tr class="g-row" onclick="toggleGrow('g9')" style="cursor:pointer;">
+          <td style="color:var(--muted)">8</td>
+          <td><span class="ticker">TSM</span><br><span style="font-size:11px;color:var(--muted)">Taiwan Semiconductor Mfg.</span></td>
+          <td id="g9-val-thb"><strong>฿5,860</strong></td>
+          <td id="g9-val-usd" style="color:var(--muted)">≈$183</td>
+          <td>3.37%</td>
+          <td><input type="number" class="shares-input" id="g9-shares" value="0.5011" step="0.0001"
+               oninput="updateShares('g9',this)" ></td>
+          <td style="color:var(--blue);font-size:12px" id="g9-cost-display">$337.06</td>
+          <td><input type="number" class="price-input positive" id="g9-price" value="365.54" step="0.01"
+               data-cost="337.0630" data-shares="0.5011" data-cur="USD"
+               oninput="recalc('g9',this)" ></td>
+          <td id="g9-pl-pct" class="positive">+8.45%</td>
+          <td id="g9-pl-thb" class="positive">+฿457</td>
+          <td><span class="advice-badge advice-increase">🟢 Hold / Add</span></td>
+          <td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'g9','TSM','USD')">＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'g9','TSM','USD')">－ Sell</button></div></td>
+          <td class="expand-icon" id="ico-g9">▶</td>
+        </tr>
+        <tr class="g-expand" id="g9">
+          <td colspan="12">
+            <div class="expand-inner">
+              <div class="expand-news">
+                <div class="expand-news-label">📰 Latest News</div>
+                TSMC's next-gen N2 process node enters volume production, scaling through 2026. Apple's latest processors, Nvidia's GPUs, and AMD's data center chips all run on N3 variants. TSMC remains the world's indispensable AI chip manufacturer — no credible alternative exists at this scale.
+              </div>
+              <div class="expand-advice advice-increase-box" style="background:#1a7f3722;border:1px solid #1a7f3744;border-radius:8px;padding:14px;flex:1;">
+                <div class="expand-advice-label" style="color:var(--green);">🟢 Hold / Add</div>
+                <strong>Best structural AI demand driver at +8.45%</strong> — Consider increasing position as it's currently underweighted at 3.37% given its importance to the AI supply chain.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- PLTR -->
+        <tr class="g-row" onclick="toggleGrow('g10')" style="cursor:pointer;">
+          <td style="color:var(--muted)">9</td>
+          <td><span class="ticker">PLTR</span><br><span style="font-size:11px;color:var(--muted)">Palantir Technologies</span></td>
+          <td id="g10-val-thb"><strong>฿4,454</strong></td>
+          <td id="g10-val-usd" style="color:var(--muted)">≈$139</td>
+          <td>2.56%</td>
+          <td><input type="number" class="shares-input" id="g10-shares" value="1.0551" step="0.0001"
+               oninput="updateShares('g10',this)" ></td>
+          <td style="color:var(--blue);font-size:12px" id="g10-cost-display">$130.97</td>
+          <td><input type="number" class="price-input positive" id="g10-price" value="131.96" step="0.01"
+               data-cost="130.9708" data-shares="1.0551" data-cur="USD"
+               oninput="recalc('g10',this)" ></td>
+          <td id="g10-pl-pct" class="positive">+0.76%</td>
+          <td id="g10-pl-thb" class="positive">+฿33</td>
+          <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
+          <td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'g10','PLTR','USD')">＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'g10','PLTR','USD')">－ Sell</button></div></td>
+          <td class="expand-icon" id="ico-g10">▶</td>
+        </tr>
+        <tr class="g-expand" id="g10">
+          <td colspan="12">
+            <div class="expand-inner">
+              <div class="expand-news">
+                <div class="expand-news-label">📰 Latest News</div>
+                Stellantis partnership renewed and expanded (Foundry + AIP integration). However, Anthropic's launch of "Managed Agents" created a -6% headwind as investors fear disruption to Palantir's enterprise AI model. 29 analysts: consensus Moderate Buy, avg target $197.77 (current ~$131). U.S. commercial revenue guidance: +115% for 2026.
+              </div>
+              <div class="expand-advice advice-hold-box">
+                <div class="expand-advice-label">🔵 Hold</div>
+                <strong>Hold — high potential, near-term noise</strong> — +0.76% gain despite Anthropic headwind shows resilience. Analyst target of $197.77 implies ~50% upside from current levels. 2026 revenue guidance is exceptional. Hold and let the story develop.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- AAPL -->
+        <tr class="g-row" onclick="toggleGrow('g11')" style="cursor:pointer;">
+          <td style="color:var(--muted)">10</td>
+          <td><span class="ticker">AAPL</span><br><span style="font-size:11px;color:var(--muted)">Apple Inc.</span></td>
+          <td id="g11-val-thb"><strong>฿4,140</strong></td>
+          <td id="g11-val-usd" style="color:var(--muted)">≈$129</td>
+          <td>2.38%</td>
+          <td><input type="number" class="shares-input" id="g11-shares" value="0.4995" step="0.0001"
+               oninput="updateShares('g11',this)" ></td>
+          <td style="color:var(--blue);font-size:12px" id="g11-cost-display">$258.44</td>
+          <td><input type="number" class="price-input positive" id="g11-price" value="259.11" step="0.01"
+               data-cost="258.4447" data-shares="0.4995" data-cur="USD"
+               oninput="recalc('g11',this)" ></td>
+          <td id="g11-pl-pct" class="positive">+0.26%</td>
+          <td id="g11-pl-thb" class="positive">+฿11</td>
+          <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
+          <td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'g11','AAPL','USD')">＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'g11','AAPL','USD')">－ Sell</button></div></td>
+          <td class="expand-icon" id="ico-g11">▶</td>
+        </tr>
+        <tr class="g-expand" id="g11">
+          <td colspan="12">
+            <div class="expand-inner">
+              <div class="expand-news">
+                <div class="expand-news-label">📰 Latest News</div>
+                Record Q1 2026: $143.76B revenue (+15.7% YoY), iPhone revenue $85.27B (+23.3%), Services all-time high $30.01B (+14%). EPS of $2.84 beat consensus $2.67. J.P. Morgan maintains Buy. Strong institutional buying from Vestmark, Princeton Capital, and Norges Bank. Peter Thiel moved $45M from NVDA into AAPL.
+              </div>
+              <div class="expand-advice advice-hold-box">
+                <div class="expand-advice-label">🔵 Hold</div>
+                <strong>Hold — fundamentals excellent, dip is noise</strong> — +0.26% with record earnings. iPhone + Services flywheel intact. Small position at 2.38%; consider adding to build a larger stake given the strong institutional conviction.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <!-- ASML -->
+        <tr class="g-row" onclick="toggleGrow('g12')" style="cursor:pointer;">
+          <td style="color:var(--muted)">11</td>
+          <td><span class="ticker">ASML</span><br><span style="font-size:11px;color:var(--muted)">ASML Holding N.V.</span></td>
+          <td id="g12-val-thb"><strong>฿3,093</strong></td>
+          <td id="g12-val-usd" style="color:var(--muted)">≈$97</td>
+          <td>1.78%</td>
+          <td><input type="number" class="shares-input" id="g12-shares" value="0.0667" step="0.0001"
+               oninput="updateShares('g12',this)" ></td>
+          <td style="color:var(--blue);font-size:12px" id="g12-cost-display">$1,336.56</td>
+          <td><input type="number" class="price-input positive" id="g12-price" value="1448.88" step="0.01"
+               data-cost="1336.5637" data-shares="0.0667" data-cur="USD"
+               oninput="recalc('g12',this)" ></td>
+          <td id="g12-pl-pct" class="positive">+8.40%</td>
+          <td id="g12-pl-thb" class="positive">+฿240</td>
+          <td><span class="advice-badge advice-hold">🔵 Hold</span></td>
+          <td><div class="action-cell"><button class="btn-buy" onclick="openAddModal(event,'g12','ASML','USD')">＋ Buy</button><button class="btn-sell" onclick="openSellModal(event,'g12','ASML','USD')">－ Sell</button></div></td>
+          <td class="expand-icon" id="ico-g12">▶</td>
+        </tr>
+        <tr class="g-expand" id="g12">
+          <td colspan="12">
+            <div class="expand-inner">
+              <div class="expand-news">
+                <div class="expand-news-label">📰 Latest News</div>
+                Q1 2026 earnings call set for April 15 — a key near-term catalyst. MATCH Act concerns may restrict China EUV revenue. Shares surged on Iran ceasefire rally. SK Hynix and TeraFab already facing EUV capacity constraints — confirming ASML's monopoly position in lithography.
+              </div>
+              <div class="expand-advice advice-hold-box">
+                <div class="expand-advice-label">🔵 Hold</div>
+                <strong>Hold — watch April 15 earnings</strong> — +8.40% today on ceasefire rally. ASML is the sole EUV supplier globally. China export risk is real but manageable. Wait for earnings on Apr 15 before deciding to add or reduce.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>📊 Growth Allocation (% by Value)</h3>
+      <div class="chart-container"><canvas id="growthDonutChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>📉 Growth P&amp;L (THB)</h3>
+      <div class="chart-container"><canvas id="growthPlChart"></canvas></div>
+    </div>
+  </div>
+
+  <div style="background:#9e6a0311;border:1px solid #9e6a0333;color:var(--yellow);padding:10px 16px;border-radius:8px;font-size:12px;margin-top:8px;">
+    ⚠️ AI Advice is based on publicly available news as of 9 Apr 2026. Not investment advice — always do your own research.
+  </div>
+</div>
+
+
 <script>
-// ─── Filter ───
-function filterStocks(filter, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('#stockBody tr').forEach(row => {
-    if (filter === 'all') { row.style.display = ''; return; }
-    const adv = row.dataset.advice || '';
-    const pnl = parseFloat(row.cells[4]?.textContent?.replace(/[+$]/,'') || 0);
-    if (filter === 'profit') row.style.display = pnl >= 0 ? '' : 'none';
-    else if (filter === 'loss') row.style.display = pnl < 0 ? '' : 'none';
-    else row.style.display = adv.includes(filter) ? '' : 'none';
-  });
+// ─── Shares update ───
+function updateShares(rowId, inputEl) {
+  const priceEl = document.getElementById(rowId + '-price');
+  if (priceEl) {
+    priceEl.dataset.shares = inputEl.value;
+    recalc(rowId, priceEl);
+  }
 }
 
-// ─── Charts ───
-const donutCtx = document.getElementById('donutChart').getContext('2d');
-new Chart(donutCtx, {
-  type: 'doughnut',
-  data: {
-    labels: ["NVDA", "MSFT", "RXRX", "ORCL", "AMZN", "AVGO", "PLTR", "GOOGL", "GOOG", "TSLA", "AMD", "META", "AAPL", "ASML", "LLY", "TSM", "RKLB", "EOSE", "HOOD", "GOLD"],
-    datasets: [{ data: [1126.27, 822.01, 219.87, 635.39, 475.66, 379.92, 96.43, 304.53, 264.17, 206.8, 214.85, 152.51, 94.82, 86.94, 86.58, 67.59, 31.34, 27.07, 26.5, 0], backgroundColor: ["#58a6ff", "#3fb950", "#d29922", "#f85149", "#bc8cff", "#ffa657", "#39d353", "#1f6feb", "#db6d28", "#388bfd", "#56d364", "#e3b341", "#ff7b72", "#d2a8ff", "#79c0ff", "#a5d6ff", "#7ee787", "#ffa198", "#cae8ff", "#ffd700"], borderWidth: 2, borderColor: '#0d1117' }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'right', labels: { color: '#8b949e', font: { size: 11 } } },
-      tooltip: { callbacks: { label: ctx => `${ctx.label}: $${ctx.raw.toFixed(2)}` } }
-    }
-  }
-});
+// ─── Add Position Modal ───
+let _mRowId = null, _mCur = 'USD';
 
-const plCtx = document.getElementById('plChart').getContext('2d');
-new Chart(plCtx, {
-  type: 'bar',
-  data: {
-    labels: ["NVDA", "MSFT", "RXRX", "ORCL", "AMZN", "AVGO", "PLTR", "GOOGL", "GOOG", "TSLA", "AMD", "META", "AAPL", "ASML", "LLY", "TSM", "RKLB", "EOSE", "HOOD", "GOLD"],
-    datasets: [{ label: 'P&L (USD)', data: [-3.78, -207.25, -92.23, -171.73, -29.46, -25.83, 1.33, -19.43, -3.19, -32.59, 1.0, -13.8, -2.15, 8.96, -1.54, 0.1, -1.87, -0.08, -1.41, 0], backgroundColor: ["#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#f8514999", "#3fb95099", "#f8514999", "#f8514999", "#f8514999", "#3fb95099", "#f8514999", "#f8514999", "#3fb95099", "#f8514999", "#3fb95099", "#f8514999", "#f8514999", "#f8514999", "#3fb95099"], borderColor: ["#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#f85149", "#3fb950", "#f85149", "#f85149", "#f85149", "#3fb950", "#f85149", "#f85149", "#3fb950", "#f85149", "#3fb950", "#f85149", "#f85149", "#f85149", "#3fb950"], borderWidth: 1, borderRadius: 4 }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `$${ctx.raw.toFixed(2)}` } } },
-    scales: {
-      x: { ticks: { color: '#8b949e', font: { size: 10 } }, grid: { color: '#21262d' } },
-      y: { ticks: { color: '#8b949e', callback: v => `$${v}` }, grid: { color: '#21262d' } }
-    }
-  }
-});
+function openAddModal(evt, rowId, ticker, cur) {
+  if (evt) evt.stopPropagation();
+  _mRowId = rowId; _mCur = cur;
+  const priceEl  = document.getElementById(rowId + '-price');
+  const sharesEl = document.getElementById(rowId + '-shares');
+  const curShares = parseFloat(sharesEl ? sharesEl.value : (priceEl ? priceEl.dataset.shares : 0)) || 0;
+  const curCost   = priceEl ? parseFloat(priceEl.dataset.cost) : 0;
+  const sym = cur === 'THB' ? '฿' : '$';
+  document.getElementById('modal-title').textContent = '➕ Add — ' + ticker;
+  document.getElementById('modal-sub').innerHTML =
+    `Current avg cost: <strong style="color:var(--blue)">${sym}${curCost.toFixed(2)}</strong>
+     &nbsp;·&nbsp; Shares held: <strong style="color:var(--blue)">${curShares.toFixed(4)}</strong>`;
+  document.getElementById('modal-price-label').textContent =
+    cur === 'THB' ? 'Buy Price (฿)' : 'Buy Price ($)';
+  document.getElementById('modal-shares').value = '';
+  document.getElementById('modal-buy-price').value = '';
+  document.getElementById('modal-preview').innerHTML = 'Enter shares and price above to preview';
+  document.getElementById('addModal').classList.add('open');
+  setTimeout(() => document.getElementById('modal-shares').focus(), 50);
+}
 
-const posCtx = document.getElementById('positionChart').getContext('2d');
-new Chart(posCtx, {
-  type: 'bar',
-  data: {
-    labels: ["NVDA", "MSFT", "RXRX", "ORCL", "AMZN", "AVGO", "PLTR", "GOOGL", "GOOG", "TSLA", "AMD", "META", "AAPL", "ASML", "LLY", "TSM", "RKLB", "EOSE", "HOOD", "GOLD"],
-    datasets: [{ label: 'Value (THB)', data: [37060.0, 27048.0, 7235.0, 20908.0, 15652.0, 12501.0, 3173.0, 10021.0, 8693.0, 6805.0, 7070.0, 5018.0, 3120.0, 2861.0, 2849.0, 2224.0, 1031.0, 891.0, 872.0, 0.0], backgroundColor: '#58a6ff44', borderColor: '#58a6ff', borderWidth: 1, borderRadius: 4 }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `฿${ctx.raw.toLocaleString()}` } } },
-    scales: {
-      x: { ticks: { color: '#8b949e' }, grid: { color: '#21262d' } },
-      y: { ticks: { color: '#8b949e', callback: v => `฿${(v/1000).toFixed(0)}K` }, grid: { color: '#21262d' } }
-    }
+function closeAddModal() {
+  document.getElementById('addModal').classList.remove('open');
+  _mRowId = null;
+}
+
+function previewAdd() {
+  if (!_mRowId) return;
+  const addShares = parseFloat(document.getElementById('modal-shares').value)    || 0;
+  const addPrice  = parseFloat(document.getElementById('modal-buy-price').value) || 0;
+  const prev = document.getElementById('modal-preview');
+  if (addShares <= 0 || addPrice <= 0) {
+    prev.innerHTML = 'Enter shares and price above to preview';
+    return;
   }
-});
+  const priceEl   = document.getElementById(_mRowId + '-price');
+  const sharesEl  = document.getElementById(_mRowId + '-shares');
+  const curShares = parseFloat(sharesEl ? sharesEl.value : priceEl.dataset.shares) || 0;
+  const curCost   = parseFloat(priceEl.dataset.cost);
+  const newShares = curShares + addShares;
+  const newCost   = (curShares * curCost + addShares * addPrice) / newShares;
+  const sym       = _mCur === 'THB' ? '฿' : '$';
+  const addTotal  = addShares * addPrice;
+  const addTHB    = _mCur === 'THB' ? addTotal : addTotal * FX;
+  const clr = newCost < parseFloat(priceEl.value) ? 'var(--green)' : 'var(--red)';
+  prev.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">New Avg Cost</div>
+        <div style="font-size:20px;font-weight:700;color:${clr}">${sym}${newCost.toFixed(2)}</div>
+        <div style="font-size:11px;color:var(--muted);">was ${sym}${curCost.toFixed(2)}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">New Total Shares</div>
+        <div style="font-size:20px;font-weight:700;color:var(--blue)">${newShares.toFixed(4)}</div>
+        <div style="font-size:11px;color:var(--muted);">+${addShares} shares</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">This Buy Cost</div>
+        <div style="font-weight:700">${sym}${addTotal.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">≈ THB</div>
+        <div style="font-weight:700">฿${Math.round(addTHB).toLocaleString()}</div>
+      </div>
+    </div>`;
+}
+
+function confirmAdd() {
+  if (!_mRowId) return;
+  const addShares = parseFloat(document.getElementById('modal-shares').value)    || 0;
+  const addPrice  = parseFloat(document.getElementById('modal-buy-price').value) || 0;
+  if (addShares <= 0 || addPrice <= 0) { alert('Please enter valid shares and price.'); return; }
+
+  const priceEl   = document.getElementById(_mRowId + '-price');
+  const sharesEl  = document.getElementById(_mRowId + '-shares');
+  const curShares = parseFloat(sharesEl ? sharesEl.value : priceEl.dataset.shares) || 0;
+  const curCost   = parseFloat(priceEl.dataset.cost);
+  const newShares = curShares + addShares;
+  const newCost   = (curShares * curCost + addShares * addPrice) / newShares;
+
+  // Update data attributes on price input
+  priceEl.dataset.shares = newShares.toFixed(4);
+  priceEl.dataset.cost   = newCost.toFixed(4);
+
+  // Update shares input display
+  if (sharesEl) sharesEl.value = newShares.toFixed(4);
+
+  // Update cost display cell
+  const costEl = document.getElementById(_mRowId + '-cost-display');
+  const sym = _mCur === 'THB' ? '฿' : '$';
+  if (costEl) costEl.textContent = sym + newCost.toFixed(2);
+
+  // Recalculate P&L with current price
+  recalc(_mRowId, priceEl);
+
+  closeAddModal();
+}
+
+// Close modal on Escape key
+
+
+const FX = 31.96;
+function recalc(rowId, inputEl) {
+  const price  = parseFloat(inputEl.value) || 0;
+  const cost   = parseFloat(inputEl.dataset.cost);
+  const shares = parseFloat(inputEl.dataset.shares);
+  const isTHB  = inputEl.dataset.cur === 'THB';
+  const pl_pct = (price - cost) / cost * 100;
+  const sign   = pl_pct >= 0 ? '+' : '';
+  const cls    = pl_pct >= 0 ? 'positive' : 'negative';
+  inputEl.className = 'price-input ' + cls;
+
+  // P&L %
+  const ppEl = document.getElementById(rowId + '-pl-pct');
+  if (ppEl) { ppEl.textContent = sign + pl_pct.toFixed(2) + '%'; ppEl.className = cls; }
+
+  // P&L THB and Value cells
+  if (shares > 0) {
+    let pl_thb, val_thb, val_usd_str;
+    if (isTHB) {
+      pl_thb      = shares * (price - cost);
+      val_thb     = shares * price;
+      val_usd_str = '—';
+    } else {
+      pl_thb      = shares * (price - cost) * FX;
+      val_thb     = shares * price * FX;
+      val_usd_str = '≈$' + Math.round(shares * price).toLocaleString();
+    }
+    const signT = pl_thb >= 0 ? '+' : '';
+    const clsT  = pl_thb >= 0 ? 'positive' : 'negative';
+    const ptEl  = document.getElementById(rowId + '-pl-thb');
+    if (ptEl) { ptEl.textContent = signT + '฿' + Math.abs(pl_thb).toLocaleString('en',{maximumFractionDigits:0}); ptEl.className = clsT; }
+    const vtEl  = document.getElementById(rowId + '-val-thb');
+    if (vtEl) { vtEl.innerHTML = '<strong>฿' + Math.round(val_thb).toLocaleString() + '</strong>'; }
+    const vuEl  = document.getElementById(rowId + '-val-usd');
+    if (vuEl) { vuEl.textContent = val_usd_str; }
+  }
+}
+
+// ─── Growth table expand/collapse ───
+function toggleGrow(id) {
+  const row = document.getElementById(id);
+  const ico = document.getElementById('ico-' + id);
+  const isOpen = row.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.g-expand').forEach(r => r.classList.remove('open'));
+  document.querySelectorAll('.g-row').forEach(r => r.classList.remove('open'));
+  document.querySelectorAll('.expand-icon').forEach(i => i.classList.remove('open'));
+  // Toggle clicked
+  if (!isOpen) {
+    row.classList.add('open');
+    ico.classList.add('open');
+    row.previousElementSibling.classList.add('open');
+  }
+}
 
 // ─── Scenario Chart (per-trade inline bars — no canvas needed) ───
 function initScenarioChart() { /* no-op: scenarios rendered inline per trade card */ }
 
+// ─── Core Charts ───
+let coreChartsInit = false;
+function initCoreCharts() {
+  if (coreChartsInit) return;
+  coreChartsInit = true;
+  const coreLabels = ['MTS-GOLD','VOO','QQQM','Dime! USD','SMH','VXUS','Dime! Save','SCHD','Dime! FCD'];
+  const coreValues = [56861, 56746, 46190, 32554, 13662, 12169, 11101, 0, 733];
+  const corePL    = [2261, 3119, 1945, 0, 970, 481, 0, 0, 0];
+  const coreColors = ['#ffd700','#3fb950','#58a6ff','#bc8cff','#ffa657','#d29922','#39d353','#a371f7','#79c0ff'];
+  new Chart(document.getElementById('coreDonutChart').getContext('2d'),{
+    type:'doughnut', data:{ labels:coreLabels, datasets:[{ data:coreValues, backgroundColor:coreColors, borderWidth:2, borderColor:'#0d1117' }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'right',labels:{color:'#8b949e',font:{size:11}}}, tooltip:{callbacks:{label:ctx=>`฿${ctx.raw.toLocaleString()}`}} } }
+  });
+  new Chart(document.getElementById('corePlChart').getContext('2d'),{
+    type:'bar', data:{ labels:coreLabels, datasets:[{ label:'P&L (THB)', data:corePL, backgroundColor:corePL.map(v=>v>0?'#3fb95099':'#f8514999'), borderColor:corePL.map(v=>v>0?'#3fb950':'#f85149'), borderWidth:1, borderRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`฿${ctx.raw.toLocaleString()}`}}}, scales:{ x:{ticks:{color:'#8b949e',font:{size:10}},grid:{color:'#21262d'}}, y:{ticks:{color:'#8b949e',callback:v=>`฿${v.toLocaleString()}`},grid:{color:'#21262d'}} } }
+  });
+}
+
+// ─── Growth Charts ───
+let growthChartsInit = false;
+function initGrowthCharts() {
+  if (growthChartsInit) return;
+  growthChartsInit = true;
+  const gLabels = ['NVDA','MSFT','ORCL','AMZN','GOOG','TSLA','META','TSM','PLTR','AAPL','ASML'];
+  const gValues = [49330,32321,23973,10007,16626,13432,10449,5860,4454,4140,3093];
+  const gPL     = [2005,-5890,-5086,775,1018,-1605,296,457,33,11,240];
+  const gColors = ['#58a6ff','#3fb950','#f85149','#bc8cff','#ffa657','#d29922','#e3b341','#39d353','#79c0ff','#cae8ff','#d2a8ff'];
+  new Chart(document.getElementById('growthDonutChart').getContext('2d'),{
+    type:'doughnut', data:{ labels:gLabels, datasets:[{ data:gValues, backgroundColor:gColors, borderWidth:2, borderColor:'#0d1117' }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'right',labels:{color:'#8b949e',font:{size:11}}}, tooltip:{callbacks:{label:ctx=>`฿${ctx.raw.toLocaleString()}`}} } }
+  });
+  new Chart(document.getElementById('growthPlChart').getContext('2d'),{
+    type:'bar', data:{ labels:gLabels, datasets:[{ label:'P&L (THB)', data:gPL, backgroundColor:gPL.map(v=>v>0?'#3fb95099':'#f8514999'), borderColor:gPL.map(v=>v>0?'#3fb950':'#f85149'), borderWidth:1, borderRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`฿${ctx.raw.toLocaleString()}`}}}, scales:{ x:{ticks:{color:'#8b949e',font:{size:10}},grid:{color:'#21262d'}}, y:{ticks:{color:'#8b949e',callback:v=>`฿${v.toLocaleString()}`},grid:{color:'#21262d'}} } }
+  });
+}
+
 // ─── Tab Switch ───
+const TAB_IDS = ['growth','core','ai','profit'];
 function switchTab(tab) {
   document.querySelectorAll('.tab').forEach((t,i) => {
-    t.classList.toggle('active', (i===0&&tab==='portfolio')||(i===1&&tab==='ai'));
+    t.classList.toggle('active', TAB_IDS[i] === tab);
   });
-  document.getElementById('tab-portfolio').classList.toggle('active', tab==='portfolio');
-  document.getElementById('tab-ai').classList.toggle('active', tab==='ai');
+  TAB_IDS.forEach(id => {
+    const el = document.getElementById('tab-' + id);
+    if (el) el.classList.toggle('active', id === tab);
+  });
   if (tab === 'ai') initScenarioChart();
+  if (tab === 'core') initCoreCharts();
+  if (tab === 'growth') initGrowthCharts();
+  if (tab === 'profit') renderPLHistory();
 }
+// Init Growth charts on load (default tab)
+// ── Seed initial realized profit ──────────────────────────
+function initPLSeed() {
+  if (localStorage.getItem('pl_seeded_v1')) return; // run only once
+  const entry = {
+    date:       '2026-01-01',
+    stock:      'ALL',
+    shares:     1,
+    avgCost:    0,
+    sellPrice:  88.41,
+    plUsd:      88.41,
+    plThb:      +(88.41 * FX).toFixed(2),
+    commission: 0,
+    vat:        0,
+    commRate:   0,
+    cur:        'USD'
+  };
+  const hist = getPLHistory();
+  hist.push(entry);           // push to end → oldest record at bottom
+  savePLHistory(hist);
+  localStorage.setItem('pl_seeded_v1', '1');
+}
+initPLSeed();
+
+document.addEventListener('DOMContentLoaded', initGrowthCharts);
+
+// ═══════════════════════════════════════════════════════
+// SELL MODAL
+// ═══════════════════════════════════════════════════════
+let _sRowId = null, _sCur = 'USD', _sTicker = '';
+
+function openSellModal(evt, rowId, ticker, cur) {
+  if (evt) evt.stopPropagation();
+  _sRowId = rowId; _sCur = cur; _sTicker = ticker;
+  const priceEl  = document.getElementById(rowId + '-price');
+  const sharesEl = document.getElementById(rowId + '-shares');
+  const curShares = parseFloat(sharesEl ? sharesEl.value : '0') || 0;
+  const curCost   = priceEl ? parseFloat(priceEl.dataset.cost) : 0;
+  const sym = cur === 'THB' ? '฿' : '$';
+  document.getElementById('sell-modal-title').textContent = '🔴 Sell — ' + ticker;
+  document.getElementById('sell-modal-sub').innerHTML =
+    `Avg cost: <strong style="color:var(--blue)">${sym}${curCost.toFixed(2)}</strong>
+     &nbsp;·&nbsp; Shares held: <strong style="color:var(--blue)">${curShares.toFixed(4)}</strong>`;
+  document.getElementById('sell-price-label').textContent =
+    cur === 'THB' ? 'Sell Price (฿)' : 'Sell Price ($)';
+  document.getElementById('sell-shares').value = '';
+  document.getElementById('sell-price').value = priceEl ? priceEl.value : '';
+  document.getElementById('sell-preview').innerHTML = 'Enter shares and sell price to preview';
+  document.getElementById('sellModal').classList.add('open');
+  setTimeout(() => document.getElementById('sell-shares').focus(), 50);
+}
+
+function closeSellModal() {
+  document.getElementById('sellModal').classList.remove('open');
+  _sRowId = null;
+}
+
+function sellMax() {
+  if (!_sRowId) return;
+  const sharesEl = document.getElementById(_sRowId + '-shares');
+  if (sharesEl) {
+    document.getElementById('sell-shares').value = sharesEl.value;
+    previewSell();
+  }
+}
+
+function previewSell() {
+  if (!_sRowId) return;
+  const sellShares = parseFloat(document.getElementById('sell-shares').value) || 0;
+  const sellPrice  = parseFloat(document.getElementById('sell-price').value)  || 0;
+  const commRate   = parseFloat(document.getElementById('sell-comm-rate').value) || 0;
+  const prev = document.getElementById('sell-preview');
+  if (sellShares <= 0 || sellPrice <= 0) {
+    prev.innerHTML = 'Enter shares and sell price to preview';
+    document.getElementById('sell-fee-preview').textContent = '—';
+    return;
+  }
+  const priceEl   = document.getElementById(_sRowId + '-price');
+  const sharesEl  = document.getElementById(_sRowId + '-shares');
+  const curShares = parseFloat(sharesEl ? sharesEl.value : '0') || 0;
+  const avgCost   = priceEl ? parseFloat(priceEl.dataset.cost) : 0;
+  const sym       = _sCur === 'THB' ? '฿' : '$';
+
+  if (sellShares > curShares) {
+    prev.innerHTML = `<span style="color:var(--red)">⚠️ Cannot sell more than ${curShares.toFixed(4)} shares held</span>`;
+    document.getElementById('sell-fee-preview').textContent = '—';
+    return;
+  }
+
+  // Fee calculation (in original currency)
+  const grossProceeds = sellShares * sellPrice;
+  const commission    = grossProceeds * commRate / 100;
+  const vat           = commission * 0.07;
+  const totalFees     = commission + vat;
+  const netProceeds   = grossProceeds - totalFees;
+
+  // P&L (gross vs net)
+  const grossPlUsd    = sellShares * (sellPrice - avgCost);
+  const grossPlThb    = _sCur === 'THB' ? grossPlUsd : grossPlUsd * FX;
+  const feesThb       = _sCur === 'THB' ? totalFees  : totalFees * FX;
+  const netPlUsd      = grossPlUsd - totalFees;
+  const netPlThb      = grossPlThb - feesThb;
+
+  const proceedsThb   = _sCur === 'THB' ? netProceeds : netProceeds * FX;
+  const isProfit      = netPlThb >= 0;
+  const clr           = isProfit ? 'var(--green)' : 'var(--red)';
+  const sign          = isProfit ? '+' : '';
+  const remaining     = curShares - sellShares;
+
+  // Update fee badge
+  const feeEl = document.getElementById('sell-fee-preview');
+  if (totalFees > 0) {
+    feeEl.textContent = `-${sym}${totalFees.toFixed(2)} (comm ${sym}${commission.toFixed(2)} + VAT ${sym}${vat.toFixed(2)})`;
+  } else {
+    feeEl.textContent = '—';
+  }
+
+  prev.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">${isProfit ? '✅ Net Profit' : '❌ Net Loss'}</div>
+        <div style="font-size:22px;font-weight:700;color:${clr}">${sign}฿${Math.abs(Math.round(netPlThb)).toLocaleString()}</div>
+        <div style="font-size:11px;color:var(--muted);">${sign}${sym}${Math.abs(netPlUsd).toFixed(2)} · ${sign}${((sellPrice-avgCost)/avgCost*100).toFixed(2)}%</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Net Proceeds</div>
+        <div style="font-size:20px;font-weight:700;">฿${Math.round(proceedsThb).toLocaleString()}</div>
+        <div style="font-size:11px;color:var(--muted);">${sym}${netProceeds.toFixed(2)}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Fees (Comm+VAT)</div>
+        <div style="font-weight:700;font-size:14px;color:var(--red);">-${sym}${totalFees.toFixed(2)}</div>
+        <div style="font-size:11px;color:var(--muted);">Gross: ${sign}${sym}${Math.abs(grossPlUsd).toFixed(2)}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Shares After</div>
+        <div style="font-weight:700;font-size:16px;">${remaining <= 0 ? '<span style="color:var(--red)">0 — Row will be removed</span>' : remaining.toFixed(4)}</div>
+      </div>
+    </div>`;
+}
+
+function confirmSell() {
+  if (!_sRowId) return;
+  const sellShares = parseFloat(document.getElementById('sell-shares').value) || 0;
+  const sellPrice  = parseFloat(document.getElementById('sell-price').value)  || 0;
+  const commRate   = parseFloat(document.getElementById('sell-comm-rate').value) || 0;
+  if (sellShares <= 0 || sellPrice <= 0) { alert('Please enter valid shares and sell price.'); return; }
+
+  const priceEl   = document.getElementById(_sRowId + '-price');
+  const sharesEl  = document.getElementById(_sRowId + '-shares');
+  const curShares = parseFloat(sharesEl ? sharesEl.value : '0') || 0;
+  const avgCost   = priceEl ? parseFloat(priceEl.dataset.cost) : 0;
+
+  if (sellShares > curShares + 0.0001) { alert('Cannot sell more shares than you hold.'); return; }
+
+  // Calculate P&L with DIME fees
+  const grossProceeds = sellShares * sellPrice;
+  const commission    = grossProceeds * commRate / 100;
+  const vat           = commission * 0.07;
+  const totalFees     = commission + vat;
+  const grossPlUsd    = sellShares * (sellPrice - avgCost);
+  const grossPlThb    = _sCur === 'THB' ? grossPlUsd : grossPlUsd * FX;
+  const feesThb       = _sCur === 'THB' ? totalFees  : totalFees * FX;
+  const netPlUsd      = grossPlUsd - totalFees;
+  const netPlThb      = grossPlThb - feesThb;
+
+  // Log to history (net P&L after fees)
+  logSellTrade({
+    date:       new Date().toISOString().split('T')[0],
+    stock:      _sTicker,
+    shares:     sellShares,
+    avgCost:    avgCost,
+    sellPrice:  sellPrice,
+    plUsd:      netPlUsd,
+    plThb:      netPlThb,
+    commission: commission,
+    vat:        vat,
+    commRate:   commRate,
+    cur:        _sCur
+  });
+
+  const remaining = curShares - sellShares;
+
+  if (remaining <= 0.0001) {
+    // Remove the row(s) from DOM
+    const rowEl = document.getElementById(_sRowId);          // expand row
+    const mainRow = rowEl ? rowEl.previousElementSibling : null;
+    if (rowEl)   rowEl.remove();
+    if (mainRow) mainRow.remove();
+    // Also remove the g-row if still there (find by shares input)
+    const sharesInput = document.getElementById(_sRowId + '-shares');
+    if (sharesInput) {
+      let tr = sharesInput.closest('tr');
+      if (tr) tr.remove();
+    }
+  } else {
+    // Update shares
+    if (sharesEl) sharesEl.value = remaining.toFixed(4);
+    if (priceEl)  priceEl.dataset.shares = remaining.toFixed(4);
+    recalc(_sRowId, priceEl);
+  }
+
+  closeSellModal();
+}
+
+// ═══════════════════════════════════════════════════════
+// PROFIT / LOSS HISTORY (localStorage)
+// ═══════════════════════════════════════════════════════
+function getPLHistory() {
+  try { return JSON.parse(localStorage.getItem('pl_history_2026') || '[]'); }
+  catch(e) { return []; }
+}
+function savePLHistory(data) {
+  try { localStorage.setItem('pl_history_2026', JSON.stringify(data)); }
+  catch(e) {}
+}
+function logSellTrade(trade) {
+  const hist = getPLHistory();
+  hist.unshift(trade);  // newest first
+  savePLHistory(hist);
+}
+
+function renderPLHistory() {
+  const hist = getPLHistory();
+  const tbody = document.getElementById('pl-tbody');
+  if (!tbody) return;
+
+  // Summary calcs
+  let totalThb = 0, totalUsd = 0, wins = 0, losses = 0;
+  let best = null, worst = null;
+  hist.forEach(t => {
+    totalThb += t.plThb;
+    totalUsd += t.plUsd;
+    if (t.plThb >= 0) wins++; else losses++;
+    if (!best  || t.plThb > best.plThb)  best  = t;
+    if (!worst || t.plThb < worst.plThb) worst = t;
+  });
+
+  // Update summary cards
+  const isPos = totalThb >= 0;
+  const sign  = totalThb >= 0 ? '+' : '';
+  document.getElementById('pl-total-thb').textContent = sign + '฿' + Math.abs(Math.round(totalThb)).toLocaleString();
+  document.getElementById('pl-total-thb').className   = 'card-value ' + (isPos ? 'positive' : 'negative');
+  document.getElementById('pl-total-usd').textContent = sign + '≈$' + Math.abs(totalUsd).toFixed(2);
+  document.getElementById('pl-wins').textContent      = wins;
+  document.getElementById('pl-losses').textContent    = losses;
+  const total = wins + losses;
+  document.getElementById('pl-win-pct').textContent   = total ? `${((wins/total)*100).toFixed(0)}% win rate` : '—';
+  document.getElementById('pl-loss-pct').textContent  = total ? `${((losses/total)*100).toFixed(0)}% loss rate` : '—';
+  document.getElementById('pl-count').textContent     = total;
+
+  if (best) {
+    const sym = best.cur === 'THB' ? '฿' : '$';
+    document.getElementById('pl-best').textContent    = '+฿' + Math.round(best.plThb).toLocaleString();
+    document.getElementById('pl-best-sub').textContent = best.stock + ' · ' + best.shares.toFixed(2) + ' shares @ ' + sym + best.sellPrice.toFixed(2);
+  }
+  if (worst) {
+    const sym = worst.cur === 'THB' ? '฿' : '$';
+    document.getElementById('pl-worst').textContent    = '฿' + Math.round(worst.plThb).toLocaleString();
+    document.getElementById('pl-worst-sub').textContent = worst.stock + ' · ' + worst.shares.toFixed(2) + ' shares @ ' + sym + worst.sellPrice.toFixed(2);
+  }
+
+  if (hist.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" class="pl-empty">No sell trades yet this year.<br><span style="font-size:12px;">Use the 🔴 Sell button on any stock row to record a trade.</span></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = hist.map((t, i) => {
+    const sym    = t.cur === 'THB' ? '฿' : '$';
+    const isP    = t.plThb >= 0;
+    const cls    = isP ? 'pl-positive' : 'pl-negative';
+    const sign   = isP ? '+' : '';
+    const plPct  = t.avgCost > 0 ? ((t.sellPrice - t.avgCost) / t.avgCost * 100).toFixed(2) : '—';
+    const hasFee = t.commission > 0 || t.vat > 0;
+    const totalFee = (t.commission || 0) + (t.vat || 0);
+    const feeStr = hasFee
+      ? `<span style="color:var(--red);font-size:11px;">-${sym}${totalFee.toFixed(2)}<br><span style="color:var(--muted)">${(t.commRate||0)}%+VAT</span></span>`
+      : '<span style="color:var(--muted);">—</span>';
+    return `<tr>
+      <td style="color:var(--muted);font-size:12px;">${t.date}</td>
+      <td><span class="ticker">${t.stock}</span></td>
+      <td>${t.shares.toFixed(4)}</td>
+      <td style="color:var(--blue);">${sym}${t.avgCost.toFixed(2)}</td>
+      <td style="font-weight:700;">${sym}${t.sellPrice.toFixed(2)}</td>
+      <td class="${cls}">${plPct !== '—' ? sign+sym+Math.abs(t.sellPrice - t.avgCost).toFixed(2)+' ('+sign+plPct+'%)' : '<span style="color:var(--muted)">—</span>'}</td>
+      <td>${feeStr}</td>
+      <td class="${cls}">${sign}${sym}${Math.abs(t.plUsd).toFixed(2)}</td>
+      <td class="${cls}">${sign}฿${Math.abs(Math.round(t.plThb)).toLocaleString()}</td>
+      <td><button onclick="deletePLEntry(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;" title="Delete">🗑️</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function deletePLEntry(idx) {
+  if (!confirm('Delete this trade record?')) return;
+  const hist = getPLHistory();
+  hist.splice(idx, 1);
+  savePLHistory(hist);
+  renderPLHistory();
+}
+
+function openManualTradeModal() {
+  // default date to today
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('mt-date').value = today;
+  document.getElementById('mt-stock').value = '';
+  document.getElementById('mt-shares').value = '';
+  document.getElementById('mt-cost').value = '';
+  document.getElementById('mt-sell').value = '';
+  document.getElementById('mt-preview').style.display = 'none';
+  document.getElementById('manualTradeModal').classList.add('open');
+}
+function closeManualTradeModal() {
+  document.getElementById('manualTradeModal').classList.remove('open');
+}
+function previewManualPL() {
+  const cost = parseFloat(document.getElementById('mt-cost').value) || 0;
+  const sell = parseFloat(document.getElementById('mt-sell').value) || 0;
+  const shares = parseFloat(document.getElementById('mt-shares').value) || 1;
+  const cur = document.getElementById('mt-cur').value;
+  if (!cost || !sell) { document.getElementById('mt-preview').style.display='none'; return; }
+  const plUsd = shares * (sell - cost);
+  const plThb = cur === 'THB' ? plUsd : plUsd * FX;
+  const sign = plUsd >= 0 ? '+' : '';
+  const cls = plUsd >= 0 ? 'positive' : 'negative';
+  const sym = cur === 'THB' ? '฿' : '$';
+  document.getElementById('mt-pl-usd').textContent = sign + sym + Math.abs(plUsd).toFixed(2);
+  document.getElementById('mt-pl-usd').className = cls;
+  document.getElementById('mt-pl-thb').textContent = sign + '฿' + Math.abs(Math.round(plThb)).toLocaleString();
+  document.getElementById('mt-pl-thb').className = cls;
+  document.getElementById('mt-preview').style.display = 'block';
+}
+function confirmManualTrade() {
+  const date   = document.getElementById('mt-date').value;
+  const stock  = document.getElementById('mt-stock').value.trim().toUpperCase();
+  const shares = parseFloat(document.getElementById('mt-shares').value);
+  const cost   = parseFloat(document.getElementById('mt-cost').value);
+  const sell   = parseFloat(document.getElementById('mt-sell').value);
+  const cur    = document.getElementById('mt-cur').value;
+  if (!date || !stock || isNaN(shares) || isNaN(cost) || isNaN(sell)) {
+    alert('Please fill in all fields.'); return;
+  }
+  const plUsd = shares * (sell - cost);
+  const plThb = cur === 'THB' ? plUsd : plUsd * FX;
+  logSellTrade({ date, stock, shares, avgCost: cost, sellPrice: sell, plUsd, plThb, cur });
+  closeManualTradeModal();
+  renderPLHistory();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeAddModal(); closeSellModal(); closeManualTradeModal(); }
+});
+
+// ── Live clock ──────────────────────────────────────────
+function updateClock() {
+  const el = document.getElementById('live-clock');
+  if (!el) return;
+  const now = new Date();
+  el.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+}
+updateClock();
+setInterval(updateClock, 1000);
 </script>
+
+<!-- ═══════════════ ADD POSITION MODAL ═══════════════ -->
+<div id="addModal">
+  <div class="modal-box" >
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <div style="font-size:18px;font-weight:700;" id="modal-title">➕ Add Position</div>
+      <div style="cursor:pointer;color:var(--muted);font-size:20px;" onclick="closeAddModal()">✕</div>
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);" id="modal-sub">—</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Shares to Buy</div>
+        <input type="number" class="modal-input" id="modal-shares" placeholder="e.g. 2" step="0.0001" min="0" oninput="previewAdd()">
+      </div>
+      <div>
+        <div id="modal-price-label" style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Buy Price ($)</div>
+        <input type="number" class="modal-input" id="modal-buy-price" placeholder="e.g. 170.00" step="0.01" min="0" oninput="previewAdd()">
+      </div>
+    </div>
+
+    <div id="modal-preview" style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:20px;font-size:13px;color:var(--muted);min-height:70px;display:flex;align-items:center;justify-content:center;">
+      Enter shares and price above to preview
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button class="modal-btn-confirm" onclick="confirmAdd()">✅ Confirm Add</button>
+      <button class="modal-btn-cancel" onclick="closeAddModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════ SELL MODAL ═══════════════ -->
+<div id="sellModal">
+  <div onclick="closeSellModal()" style="position:absolute;inset:0;"></div>
+  <div class="modal-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <div style="font-size:18px;font-weight:700;color:var(--red);" id="sell-modal-title">🔴 Sell Position</div>
+      <div style="cursor:pointer;color:var(--muted);font-size:20px;" onclick="closeSellModal()">✕</div>
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);" id="sell-modal-sub">—</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Shares to Sell</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="number" class="modal-input" id="sell-shares" placeholder="0.0000" step="0.0001" min="0" oninput="previewSell()" style="flex:1;">
+          <button onclick="sellMax()" style="background:#f8514922;border:1px solid #f8514966;color:var(--red);border-radius:6px;padding:8px 10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">Max</button>
+        </div>
+      </div>
+      <div>
+        <div id="sell-price-label" style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Sell Price ($)</div>
+        <input type="number" class="modal-input" id="sell-price" placeholder="0.00" step="0.01" min="0" oninput="previewSell()">
+      </div>
+    </div>
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">
+      <div style="font-size:12px;color:var(--muted);white-space:nowrap;">🏦 DIME Commission</div>
+      <div style="display:flex;align-items:center;gap:6px;flex:1;">
+        <input type="number" class="modal-input" id="sell-comm-rate" value="0.15" step="0.01" min="0" max="100"
+          oninput="previewSell()" style="width:80px;padding:6px 10px;font-size:13px;text-align:center;">
+        <span style="font-size:12px;color:var(--muted);">% + VAT 7%</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);text-align:right;line-height:1.4;">Fee: <span id="sell-fee-preview" style="color:var(--red);">—</span></div>
+    </div>
+
+    <div id="sell-preview" style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:20px;font-size:13px;color:var(--muted);min-height:70px;display:flex;align-items:center;justify-content:center;">
+      Enter shares and sell price to preview
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button onclick="confirmSell()" style="flex:1;background:#f85149;color:white;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;">🔴 Confirm Sell</button>
+      <button class="modal-btn-cancel" onclick="closeSellModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PROFIT / LOSS TAB ═══════════════ -->
+<div id="tab-profit" class="section main">
+  <div class="summary-grid" id="pl-summary-cards">
+    <div class="card">
+      <div class="card-label">📈 Realized P&L (THB)</div>
+      <div class="card-value" id="pl-total-thb" style="font-size:22px;">฿0</div>
+      <div class="card-sub" id="pl-total-usd">≈$0</div>
+    </div>
+    <div class="card">
+      <div class="card-label">✅ Winning Trades</div>
+      <div class="card-value positive" id="pl-wins">0</div>
+      <div class="card-sub" id="pl-win-pct">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">❌ Losing Trades</div>
+      <div class="card-value negative" id="pl-losses">0</div>
+      <div class="card-sub" id="pl-loss-pct">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🏆 Best Trade</div>
+      <div class="card-value positive" id="pl-best">—</div>
+      <div class="card-sub" id="pl-best-sub">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">💔 Worst Trade</div>
+      <div class="card-value negative" id="pl-worst">—</div>
+      <div class="card-sub" id="pl-worst-sub">—</div>
+    </div>
+    <div class="card">
+      <div class="card-label">📊 Total Trades</div>
+      <div class="card-value blue-text" id="pl-count">0</div>
+      <div class="card-sub">this year</div>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
+    <div class="section-title" style="margin:0;"><div class="dot" style="background:var(--red)"></div> Sell History — This Year</div>
+    <button class="btn-buy" onclick="openManualTradeModal()" style="padding:7px 14px;font-size:12px;">＋ Add Manual Entry</button>
+  </div>
+  <div class="table-wrap">
+    <table class="pl-table" style="width:100%;">
+      <thead>
+        <tr>
+          <th>Date</th><th>Stock</th><th>Shares Sold</th>
+          <th>Avg Cost</th><th>Sell Price</th>
+          <th>P&L / Share</th><th>Fees</th><th>Net P&L ($)</th><th>Net P&L (THB)</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="pl-tbody">
+        <tr><td colspan="9" class="pl-empty">No sell trades yet this year.<br><span style="font-size:12px;">Use the 🔴 Sell button on any stock row to record a trade.</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Manual Trade Modal -->
+<div id="manualTradeModal">
+  <div class="modal-box" style="width:420px;">
+    <div style="font-size:16px;font-weight:700;margin-bottom:18px;">📝 Add Manual Trade Entry</div>
+    <div style="display:grid;gap:12px;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:5px;">DATE</div>
+        <input type="date" id="mt-date" class="modal-input" style="font-size:13px;font-weight:500;">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;">STOCK / TICKER</div>
+          <input type="text" id="mt-stock" class="modal-input" placeholder="e.g. NVDA" style="font-size:14px;text-transform:uppercase;">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;">CURRENCY</div>
+          <select id="mt-cur" class="modal-input" style="font-size:13px;">
+            <option value="USD">USD ($)</option>
+            <option value="THB">THB (฿)</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;">SHARES SOLD</div>
+          <input type="number" id="mt-shares" class="modal-input" placeholder="0" step="0.0001" min="0">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;">AVG COST</div>
+          <input type="number" id="mt-cost" class="modal-input" placeholder="0.00" step="0.01" min="0" oninput="previewManualPL()">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;">SELL PRICE</div>
+          <input type="number" id="mt-sell" class="modal-input" placeholder="0.00" step="0.01" min="0" oninput="previewManualPL()">
+        </div>
+      </div>
+      <div id="mt-preview" style="background:var(--card2);border-radius:8px;padding:12px;font-size:13px;display:none;">
+        <div style="color:var(--muted);font-size:11px;margin-bottom:6px;">PREVIEW P&L</div>
+        <div style="display:flex;gap:20px;">
+          <div>P&L ($): <span id="mt-pl-usd" style="font-weight:700;">—</span></div>
+          <div>P&L (THB): <span id="mt-pl-thb" style="font-weight:700;">—</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button class="modal-btn-cancel" onclick="closeManualTradeModal()">Cancel</button>
+      <button class="modal-btn-confirm" onclick="confirmManualTrade()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
